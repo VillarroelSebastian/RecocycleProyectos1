@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Registro de Empresa";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/global.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Registro.css" />
+
+</head>
+<body>
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="registro-panel">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Registro de Empresa</h2>
+                <img src="~/imagenes/icono.png" class="logo-reciclaje" />
+            </div>
+
+            <form method="post" asp-action="RegistrarEmpresa" enctype="multipart/form-data" class="form-registro">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre Empresa</label>
+                        <input type="text" name="nombreEmpresa" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Número de contacto</label>
+                        <input type="text" name="telefono" required pattern="[0-9]+" title="Solo números permitidos" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" name="correo" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" name="contraseña" required />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group upload-logo">
+                        <label>Subir Logo</label>
+                        <div class="custom-upload">
+                            <label for="logoInput">
+                                <img id="previewLogo" src="/imagenes/icono-subir.png" alt="Subir logo" class="upload-preview" />
+                            </label>
+                            <input type="file" id="logoInput" name="logo" accept="image/*" required
+                                   title="Debe subir un logo para registrar la empresa" />
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="error-message">@ViewBag.Error</div>
+                            }
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group categorias">
+                        <label>Categorías que Maneja</label>
+                        <div class="checkbox-grid">
+                            @foreach (var cat in ViewBag.Categorias as List<Categoria>)
+                            {
+                                <label>
+                                    <input type="checkbox" name="categoria" value="@cat.IdCategoria" />
+                                    @cat.Nombre
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-imagen-register" title="Registrar Empresa"></button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        const logoInput = document.getElementById('logoInput');
+        const previewLogo = document.getElementById('previewLogo');
+
+        logoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewLogo.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+</body>

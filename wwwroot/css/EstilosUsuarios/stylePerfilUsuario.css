@@ -1,0 +1,450 @@
+﻿.screen {
+    position: fixed;
+    opacity: 20%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('/imagenes/FondoPantalla.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+    align-items: center;
+}
+
+
+
+
+.btn-op {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0b6623;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 3px 0;
+    font-size: 14px;
+}
+
+.btn-op img {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-rechazar {
+    background: #8b0000 !important;
+}
+
+.btn-calificar {
+    background: #daa520 !important;
+}
+
+
+
+
+
+.container-welcome {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+
+
+.card {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 40px 60px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 2000px;
+    height: 650px;
+    max-width: 95%;
+    text-align: center;
+}
+
+
+
+
+
+.options {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    background: #064d1a;
+    color: white;
+    padding: 15px 20px;
+    overflow: hidden;
+}
+
+
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+
+
+.user-score {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+
+.btn-Notify {
+    width: 50px;
+    height: 50px;
+    background: url('/imagenes/notify.png') no-repeat center center;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+
+
+    .btn-Notify:hover {
+        background: url('/imagenes/notifyHover.png') no-repeat center center;
+        background-size: contain;
+    }
+
+
+
+.btnC {
+    display: inline-block;
+    background: red;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+    height: 70px;
+    width: 250px;
+    font-size: 18px;
+    text-align: center;
+}
+
+
+
+    .btnC:hover {
+        background: black;
+        color: white;
+    }
+
+
+
+.card-body {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+
+
+.ranking {
+    width: 50%;
+    background: #064d1a;
+    border-radius: 15px;
+    padding: 15px;
+    color: black;
+}
+
+
+
+    .ranking h3 {
+        color: white;
+    }
+
+
+
+    .ranking ol {
+        padding-left: 10px;
+        margin: 0;
+    }
+
+
+
+    .ranking li {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        background-color: lightgray;
+        border-radius: 5px;
+    }
+
+
+
+.imgPerfil {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+}
+
+
+
+.position {
+    margin-left: 15px;
+}
+
+
+
+.points {
+    margin-right: 15px;
+}
+
+
+
+.actions {
+    width: 45%;
+    text-align: center;
+    padding: 10px;
+}
+
+
+
+    .actions h3 {
+        margin-top: 20px;
+        color: black;
+    }
+
+
+
+.btn-action {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+
+
+.btn-recycle {
+    background: #0d5e18;
+}
+
+    .btn-recycle:hover {
+        background: #117A37;
+        color: black;
+    }
+
+
+
+.btn-publi {
+    background: #0d5e18;
+}
+
+
+
+    .btn-publi:hover {
+        background: #117A37;
+        color: black;
+    }
+
+
+
+.btn-prize {
+    background: #006400;
+}
+
+    .btn-prize:hover {
+        background: #117A37;
+        color: black;
+    }
+
+@media (max-width: 992px) {
+
+    .card {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+
+    .card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: #064d1a;
+        color: white;
+        padding: 20px;
+        border-radius: 15px 15px 0 0;
+        gap: 15px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+        .user-info img.avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info div {
+            text-align: left;
+        }
+
+        .user-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: white;
+        }
+
+    .user-score {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+        .user-score h4 {
+            font-size: 18px;
+            margin: 0;
+            color: white;
+        }
+
+    .btn-Notify {
+        width: 45px;
+        height: 45px;
+        background: url('/imagenes/notify.png') no-repeat center center;
+        background-size: contain;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn-Notify:hover {
+            background: url('/imagenes/notifyHover.png') no-repeat center center;
+            background-size: contain;
+        }
+
+    .btnC {
+        background: red;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s;
+        font-size: 16px;
+        width: auto;
+        height: auto;
+    }
+
+        .btnC:hover {
+            background: black;
+        }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .ranking {
+        width: 100%;
+        max-width: 500px;
+        background: #064d1a;
+        border-radius: 15px;
+        padding: 15px;
+        color: black;
+    }
+
+        .ranking h3 {
+            color: white;
+            text-align: center;
+        }
+
+        .ranking li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: lightgray;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 8px;
+        }
+
+    .imgPerfil {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+    }
+
+    .actions {
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+        .actions h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: black;
+        }
+
+    .btn-action {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .user-info h3 {
+        font-size: 20px;
+    }
+
+    .user-score h4 {
+        font-size: 16px;
+    }
+
+    .btnC {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}

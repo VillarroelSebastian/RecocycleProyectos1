@@ -1,0 +1,112 @@
+﻿@model Web_Recocycle.Models.ReporteMensualViewModel
+
+@{
+    ViewData["Title"] = "Reporte Mensual";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/globals.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Reporte.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="reporte-container">
+       
+
+        <h1>Reporte - 2025</h1>
+        <div class="reporte-actions">
+            <form asp-action="DescargarReportePdf" method="post">
+                <button type="submit" class="btn-descargar-img" title="Descargar PDF"></button>
+            </form>
+        </div>
+
+        <!-- Reporte Recicladores -->
+        <div id="reporteRecicladores">
+            <div class="reporte-section">
+                <h2>Crecimiento respecto al mes anterior</h2>
+                <div class="reporte-card">
+                    <span class="reporte-metric">+25%</span>
+                    <p>Comparado con septiembre</p>
+                </div>
+            </div>
+
+            <div class="reporte-section">
+                <h2>Total reciclajes realizados</h2>
+                <div class="reporte-card">
+                    <span class="reporte-metric">@Model.Recicladores.Sum(r => r.Puntos)</span>
+                    <p>Puntos acumulados por recicladores</p>
+                </div>
+            </div>
+
+            <div class="reporte-section">
+                <h2>Ranking de recicladores</h2>
+                <table class="reporte-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Puntos</th>
+                            <th>Calificación promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.Recicladores.OrderByDescending(r => r.Puntos).Take(10))
+                        {
+                            <tr>
+                                <td>@r.Nombres @r.Apellidos</td>
+                                <td>@r.Puntos</td>
+                                <td>@r.PromedioEstrellas</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="reporte-section">
+                <h2>Distribución de puntos</h2>
+                <canvas id="graficoPuntos" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Gráfico recicladores
+        const recicladoresLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Recicladores.Select(r => r.Nombres)));
+        const recicladoresData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Recicladores.Select(r => r.Puntos)));
+
+        if (recicladoresLabels.length > 0) {
+            const ctx = document.getElementById('graficoPuntos').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: recicladoresLabels,
+                    datasets: [{
+                        label: 'Puntos',
+                        data: recicladoresData,
+                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                        borderColor: '#ffffff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#ffffff' } },
+                        x: { ticks: { color: '#ffffff' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

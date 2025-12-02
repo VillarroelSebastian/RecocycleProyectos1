@@ -1,0 +1,172 @@
+﻿@{
+    ViewData["Title"] = "Inicio Administrador";
+    Layout = null;
+
+    var usuariosTop = (List<Web_Recocycle.Models.Reciclador>)ViewBag.TopUsuarios;
+    var premio = (Web_Recocycle.Models.Premio)ViewBag.Premio;
+    var empresasActivas = ViewBag.EmpresasActivas != null ? (int)ViewBag.EmpresasActivas : 0;
+    var totalReciclajes = ViewBag.TotalReciclajes != null ? (int)ViewBag.TotalReciclajes : 0;
+   
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/globals.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/index.css" />
+</head>
+<body>
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="main-content">
+        <h2>Hola, @(Context.Session.GetString("Correo"))</h2>
+ 
+        @{
+            var correoSesion = Context.Session.GetString("Correo");
+            var correoSuperAdmin = "admin3@recocycle.com";
+        }
+
+        @if (correoSesion == correoSuperAdmin)
+        {
+            <div class="contenedor-boton">
+                <button id="btnRegistrarAdmin" class="btn-imagen2" type="button"></button>
+            </div>
+        }
+
+
+        <div class="parent">
+            <div class="div1">
+                <h2> Usuarios top del mes</h2>
+                @for (int i = 0; i < usuariosTop.Count && i < 3; i++)
+                {
+                    <p>@(i + 1). @usuariosTop[i].Nombres - @usuariosTop[i].Puntos pts</p>
+                }
+                <button class="btn-imagen" id="btnResetearInicio" type="button"></button>
+
+            </div>
+            <div class="div2">
+                <h2>Premio Actual del Mes</h2>
+                @if (premio != null)
+                {
+                    <p>@premio.Nombre</p>
+                    <p>Fecha límite: @premio.FechaLimite.ToShortDateString()</p>
+                    <img src="data:image/png;base64,@Convert.ToBase64String(premio.ImgPremio)" alt="Premio" width="120" />
+                }
+
+                else
+                {
+                    <p>No hay premio registrado.</p>
+                }
+            </div>
+            <div class="div3">
+                <h2>Empresas Activas</h2>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="~/imagenes/grandes-almacenes.png" alt="Icono Empresa" width="80" />
+                    <p>@empresasActivas empresas activas este mes</p>
+                </div>
+            </div>
+            <div class="div4">
+                <h2>Reciclajes</h2>
+                <span class="reporte-metric">@totalReciclajes</span>
+                <p>reciclajes finalizados en total</p>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById("btnResetearInicio").addEventListener("click", function () {
+            Swal.fire({
+                title: '<span style="font-size:26px; font-weight:bold; color:white;">Resetear Puntos</span>',
+                html: `
+                    <p style="font-size:18px; color:white;">Ingrese el porcentaje que desea aplicar:</p>
+                    <input type="number" id="porcentajeInput" class="swal2-input" placeholder="Ej: 50" min="1" max="100" />
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Aplicar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#1e4d3a',
+                background: 'linear-gradient(#064d1a, black)',
+                preConfirm: () => {
+                    const valor = parseInt(document.getElementById('porcentajeInput').value);
+                    if (isNaN(valor) || valor < 1 || valor > 100) {
+                        Swal.showValidationMessage('Ingrese un valor entre 1 y 100');
+                        return false;
+                    }
+                    return valor;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const porcentaje = result.value;
+                    window.location.href = `/Administrador/ResetearPuntos?porcentaje=${porcentaje}`;
+                }
+            });
+        });
+    </script>
+    <script>
+        document.getElementById("btnRegistrarAdmin").addEventListener("click", function () {
+            Swal.fire({
+                title: '<span style="font-size:24px; font-weight:bold;">Registrar Administrador</span>',
+                html: `
+                    <input type="text" id="nombres" class="swal2-input" placeholder="Nombres">
+                    <input type="text" id="apellidos" class="swal2-input" placeholder="Apellidos">
+                    <input type="email" id="correo" class="swal2-input" placeholder="Correo electrónico">
+                    <input type="password" id="contrasenia" class="swal2-input" placeholder="Contraseña">
+                    <input type="text" id="telefono" class="swal2-input" placeholder="Teléfono">
+                    <select id="genero" class="swal2-input">
+                        <option value="">Seleccione género</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Registrar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#28a745',
+                background: 'linear-gradient(#064d1a, black)',
+                color: 'white',
+                preConfirm: () => {
+                    const admin = {
+                        Nombres: document.getElementById('nombres').value,
+                        Apellidos: document.getElementById('apellidos').value,
+                        Correo: document.getElementById('correo').value,
+                        Contrasenia: document.getElementById('contrasenia').value,
+                        Telefono: parseInt(document.getElementById('telefono').value),
+                        Genero: document.getElementById('genero').value
+                    };
+
+                    if (!admin.Nombres || !admin.Apellidos || !admin.Correo || !admin.Contrasenia || !admin.Telefono || !admin.Genero) {
+                        Swal.showValidationMessage('Todos los campos son obligatorios');
+                        return false;
+                    }
+
+                    return fetch('/Administrador/RegistrarAdministradorManual', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(admin)
+                    }).then(response => {
+                        if (!response.ok) throw new Error('Error al registrar');
+                        return response.json();
+                    });
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Administrador registrado correctamente',
+                        confirmButtonColor: '#28a745'
+                    });
+                }
+            });
+        });
+    </script>
+
+
+</body>
+</html>

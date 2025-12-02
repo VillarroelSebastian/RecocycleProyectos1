@@ -1,0 +1,142 @@
+﻿@model Web_Recocycle.Models.ReporteMensualViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte Mensual PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            margin-bottom: 8px;
+        }
+
+        .metric-box {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: #f8f8f8;
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th, td {
+            border: 1px solid #444;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e8e8e8;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Reporte Mensual - @DateTime.Now.ToString("MMMM yyyy")</h1>
+
+    <!-- Resumen ejecutivo -->
+    <h2>Resumen del mes</h2>
+    <table>
+        <tr><td>Total reciclajes finalizados</td><td>@Model.TotalReciclajesFinalizados</td></tr>
+        <tr><td>Total publicaciones creadas</td><td>@Model.TotalPublicaciones</td></tr>
+        <tr><td>Usuarios activos</td><td>@Model.TotalUsuariosActivos</td></tr>
+        <tr><td>Empresas activas</td><td>@Model.EmpresasActivas</td></tr>
+
+    </table>
+
+    <!-- Distribución de materiales -->
+    <h2>Distribución de materiales reciclados</h2>
+    <table>
+        <thead>
+            <tr><th>Tipo de material</th><th>Cantidad</th><th>Porcentaje</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.Materiales)
+            {
+                <tr>
+                    <td>@m.Tipo</td>
+                    <td>@m.Cantidad</td>
+                    <td>@m.Porcentaje %</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Premio mensual -->
+    <h2>Premio del mes</h2>
+    @if (Model.Premio != null)
+    {
+        <p><strong>@Model.Premio.Nombre</strong></p>
+        <p>Fecha límite: @Model.Premio.FechaLimite.ToShortDateString()</p>
+        @* <img src="data:image/png;base64,@Convert.ToBase64String(Model.Premio.ImgPremio)" width="120" /> *@
+    }
+    else
+    {
+        <p>No hay premio registrado.</p>
+    }
+
+    <!-- Ranking recicladores -->
+    <h2>Ranking de recicladores (Top 10)</h2>
+    <table>
+        <thead>
+            <tr><th>Nombre</th><th>Puntos</th><th>Reciclajes</th><th>Promedio Estrellas</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Recicladores.OrderByDescending(r => r.Puntos).Take(10))
+            {
+                <tr>
+                    <td>@r.Nombres @r.Apellidos</td>
+                    <td>@r.Puntos</td>
+                    <td>@r.TotalReciclajes</td>
+                    <td>@r.PromedioEstrellas</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Empresas activas -->
+    <h2>Empresas recolectoras</h2>
+    <table>
+        <thead>
+            <tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Asignaciones finalizadas</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model.Empresas)
+            {
+                <tr>
+                    <td>@e.NombreEmpresa</td>
+                    <td>@e.Correo</td>
+                    <td>@e.Telefono</td>
+                    <td>@e.TotalAsignaciones</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Comparativa mensual -->
+    <h2>Crecimiento respecto al mes anterior</h2>
+    <div class="metric-box">
+        <strong>@Model.CrecimientoReciclajes %</strong><br />
+        Reciclajes vs mes anterior
+    </div>
+    <div class="metric-box">
+        <strong>@Model.CrecimientoPublicaciones %</strong><br />
+        Publicaciones vs mes anterior
+    </div>
+    <div class="metric-box">
+        <strong>@Model.CrecimientoEmpresas %</strong><br />
+        Empresas activas vs mes anterior
+    </div>
+
+</body>
+</html>

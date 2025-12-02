@@ -1,0 +1,211 @@
+﻿.screen {
+    position: fixed;
+    opacity: 20%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('/imagenes/FondoPantalla.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+    align-items: center;
+}
+
+.container-welcome {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    position: relative;
+    z-index: 5;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 40px 70px;
+    border-radius: 28px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.35);
+    width: 1100px;
+    max-width: 95%;
+    text-align: left;
+    backdrop-filter: blur(6px);
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.form-group:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 6px solid #117A37;
+    object-fit: cover;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.3);
+}
+
+#ImgPerfilBase4.has-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+    .form-group label {
+        font-size: 18px;
+        font-weight: bold;
+        color: #064d1a;
+    }
+
+    .form-group input {
+        width: 100%;
+        border-radius: 8px;
+        border: 2px solid #ccc;
+        transition: 0.2s;
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+        .form-group input:focus {
+            border-color: #117A37;
+            outline: none;
+            box-shadow: 0px 0px 8px rgba(17,122,55,0.4);
+        }
+
+.btnE {
+    background: Blue;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    width: 220px;
+    text-align: center;
+    transition: 0.2s;
+    color: white;
+}
+
+    .btnE:hover {
+        background: AliceBlue;
+        color: black;
+    }
+
+.boton {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 35px;
+}
+
+.btnC, .btnG {
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 18px;
+    text-decoration: none;
+    font-weight: bold;
+    width: 220px;
+    transition: 0.2s;
+}
+
+.btnC {
+    background: #c40000;
+    color: white;
+}
+
+    .btnC:hover {
+        background: #8b0000;
+    }
+
+.btnG {
+    background: #064d1a;
+    color: white;
+}
+
+    .btnG:hover {
+        background: #117A37;
+        color: black;
+    }
+
+
+@media (max-width: 992px) {
+    .card {
+        max-width: 98%;
+        padding: 35px 40px;
+    }
+
+    .form-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .form-group:first-child {
+        margin-bottom: 20px;
+    }
+}
+
+/* 📌 Celulares (pantallas pequeñas) */
+@media (max-width: 768px) {
+    .card {
+        max-width: 100%;
+        width: 95%;
+        padding: 35px 30px;
+    }
+
+    .avatar {
+        width: 150px;
+        height: 150px;
+    }
+
+    .boton {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btnC, .btnG {
+        width: 100%;
+    }
+}
+
+/* 📌 Celulares muy pequeños (tipo iPhone SE) */
+@media (max-width: 480px) {
+    .card {
+        width: 100%;
+        padding: 25px 20px;
+        border-radius: 18px;
+        /* 🔥 Fondo blanco más ancho en móvil */
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .avatar {
+        width: 130px;
+        height: 130px;
+    }
+
+    .form-group label {
+        font-size: 16px;
+    }
+
+    .form-group input {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}

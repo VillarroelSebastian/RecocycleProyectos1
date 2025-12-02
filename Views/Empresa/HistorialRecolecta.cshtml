@@ -1,0 +1,328 @@
+﻿@model List<Web_Recocycle.Models.HistorialAsignacionViewModel>
+@using System.Web
+
+@{
+    ViewData["Title"] = "Historial";
+}
+<link rel="stylesheet" href="~/css/EstilosEmpresaR/styleHistorial.css" asp-append-version="true" />
+
+
+<div class="screen"></div>
+
+<!-- ENCABEZADO SUPERIOR (fuera del contenedor central) -->
+<header class="encabezado-global" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <img src="~/imagenes/logo.png" alt="Logo" style="height: 60px;" />
+    <h1 style="margin: 0; font-size: 2rem;">Historial de Recolección</h1>
+    <a href="/Home/InicioSesionUsuario">
+        <img src="~/imagenes/btnCerrarSesion.png" alt="Cerrar Sesión" style="height: 50px;" />
+    </a>
+
+</header>
+<div class="filtro-estado">
+    <label for="estadoFiltro">🗂️ Filtrar por estado:</label>
+    <select id="estadoFiltro" onchange="filtrarHistorial()">
+        <option value="Todos">🔍 Todos</option>
+        <option value="Pendiente">⏳ Pendiente</option>
+        <option value="Rechazado">❌ Rechazado</option>
+        <option value="Confirmado">✅ Confirmado</option>
+        <option value="Finalizado">🏁 Finalizado</option>
+    </select>
+</div>
+<div class="header-actions">
+    <button class="back-btn" onclick="window.history.back()" style="background:none; border:none; cursor:pointer;">
+        <img src="~/imagenes/btnBack.png" alt="Volver" style="height:50px;" />
+    </button>
+</div>
+
+
+<!-- CONTENEDOR CENTRAL -->
+<div class="parent">
+    <div class="div1">
+
+        <ol class="ranking-list">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var r = Model[i];
+                var imgSrc = r.ImgPerfil != null
+                ? $"data:image/jpeg;base64,{Convert.ToBase64String(r.ImgPerfil)}"
+                : Url.Content("~/imagenes/PerfilPredeterminado.jpg");
+
+                <li class="rank-item" data-estado="@r.Estado">
+                    <span class="position">@((i + 1)).</span>
+                    <img class="imgPerfil" src="@imgSrc" alt="Foto de @r.NombreReciclador" width="60" height="60" />
+                    <div class="info">
+                        <span class="name">@r.NombreReciclador</span>
+                        <span class="categoria">Categoría: <strong>@r.Categoria</strong></span>
+                        <span class="estado">Estado: <strong>@r.Estado</strong></span> 
+                    </div>
+
+                    <div class="acciones">
+                        <button onclick="mostrarDetalles(@r.IdAsignacion)" style="background: none; border: none; padding: 0; cursor: pointer;">
+                            <img src="~/imagenes/btnDetalleHistorial.png" alt="Ver Detalles" style="height: 40px;" />
+                        </button>
+
+                        @if (r.Estado == "Finalizado")
+                        {
+                            <button id="btnCalificar_@r.IdAsignacion"
+                                    onclick="mostrarCalificacion(
+                '@Html.Raw(HttpUtility.JavaScriptStringEncode(r.NombreReciclador))',
+                '@Html.Raw(HttpUtility.JavaScriptStringEncode(r.Categoria))',
+                @r.IdReciclador,
+                @r.IdAsignacion)"
+                                    style="background: none; border: none; padding: 0; cursor: pointer;">
+                                <img src="~/imagenes/btnCalificar.png" alt="Calificar" style="height: 40px;" />
+                            </button>
+
+                        }
+                        else
+                        {
+                            <img src="~/imagenes/btnBloqueo.png" alt="Calificar (Desactivado)" style="height: 40px; opacity: 0.4; cursor: pointer;" title="Solo disponible cuando la asignación esté finalizada"
+                                 onclick="mostrarBloqueoCalificacion()" />
+
+                        }
+
+                    </div>
+
+                </li>
+            }
+        </ol>
+    </div>
+</div>
+
+<!-- PANEL DE DETALLES -->
+<div id="detalle-panel" class="detalle-panel" style="display: none;">
+    <h3>Detalles de la Asignación</h3>
+    <p><strong>Categoría:</strong> <span id="detalle-categoria"></span></p>
+    <p><strong>Descripción:</strong> <span id="detalle-descripcion"></span></p>
+    <p><strong>Publicado por:</strong> <span id="detalle-reciclador"></span></p>
+    <p><strong>Publicado el:</strong> <span id="detalle-fecha"></span></p>
+    <p><strong>Horarios Disponibles:</strong></p>
+    <ul id="detalle-horarios"></ul>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function filtrarHistorial() {
+            const filtro = document.getElementById('estadoFiltro').value;
+            const items = document.querySelectorAll('.rank-item');
+            items.forEach(item => {
+                const estado = item.getAttribute('data-estado');
+                if (filtro === 'Todos' || estado === filtro) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function mostrarDetalles(idAsignacion) {
+            fetch(`/Empresa/ObtenerDetalleAsignacion?id=${idAsignacion}`)
+                .then(response => response.json())
+                .then(data => {
+                    const fecha = new Date(data.fechaRegistro).toLocaleDateString();
+                    const horarios = data.fechasDisponibles.map(f => `<li>${f.fecha} (${f.desdeHora} - ${f.hastaHora})</li>`).join('');
+                    Swal.fire({
+                        title: `<span style="font-size:26px; font-weight:bold; color:white;">Detalles de la Asignación</span>`,
+                        html: `
+                            <p style="font-size:18px; color:white;"><strong>Categoría:</strong> ${data.categoria}</p>
+                            <p style="font-size:18px; color:white;"><strong>Descripción:</strong> ${data.descripcion}</p>
+                            <p style="font-size:18px; color:white;"><strong>Publicado por:</strong> ${data.nombreReciclador}</p>
+                            <p style="font-size:18px; color:white;"><strong>Publicado el:</strong> ${fecha}</p>
+                            <p style="font-size:18px; color:white;"><strong>Horarios Disponibles:</strong></p>
+                            <ul style="text-align:left; color:white;">${horarios}</ul>
+                        `,
+                        icon: 'info',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Cerrar',
+                        confirmButtonColor: '#3085d6',
+                        background: 'linear-gradient(#064d1a, black)',
+                        customClass: { popup: 'swal-custom-popup' }
+                    });
+                })
+                .catch(error => {
+                    console.error("Error al obtener detalles:", error);
+                    Swal.fire({
+                        title: '<span style="font-size:24px; font-weight:bold; color:white;">ERROR</span>',
+                        html: `
+                            <p style="font-size:18px; color:white;">No se pudo cargar la información.</p>
+                            <p style="font-size:16px; color:white;">Intenta nuevamente más tarde.</p>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'Cerrar',
+                        confirmButtonColor: '#8B0000',
+                        background: 'linear-gradient(#064d1a, black)',
+                        customClass: { popup: 'swal-custom-popup' }
+                    });
+                });
+        }
+    </script>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function mostrarCalificacion(nombre, categoria, idUsuario, idAsignacion) {
+
+        Swal.fire({
+            title: `<span style="font-size:24px; font-weight:bold; color:white;">Calificar a ${nombre}</span>`,
+            html: `
+                <div style="max-height:400px; overflow:hidden;">
+                    <p style="font-size:18px; color:white;">Categoría: <strong>${categoria}</strong></p>
+                    <div style="margin:10px 0;">
+                        <label style="color:white;">Puntuación:</label><br/>
+                        <div id="rating-stars" style="font-size:24px;"></div>
+                    </div>
+                </div>
+            `,
+            didOpen: () => {
+                const container = document.getElementById('rating-stars');
+                container.innerHTML = '';
+
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.textContent = '★';
+                    star.style.cursor = 'pointer';
+                    star.classList.add('estrella');
+
+                    star.onclick = () => {
+                        container.querySelectorAll('span').forEach((s, idx) => {
+                            s.classList.toggle('selected', idx < i);
+                        });
+                    };
+
+                    container.appendChild(star);
+                }
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            cancelButtonText: 'Cancelar',
+            background: 'linear-gradient(#064d1a, black)',
+            customClass: { popup: 'swal-custom-popup' },
+            preConfirm: () => {
+                const estrellas = document.querySelectorAll('#rating-stars span.selected').length;
+
+                if (estrellas < 1 || estrellas > 5) {
+                    Swal.showValidationMessage('Selecciona entre 1 y 5 estrellas.');
+                    return false;
+                }
+
+                return {
+                    idUsuario,
+                    estrellas
+                };
+            }
+        })
+        .then(result => {
+
+            if (result.isConfirmed && result.value) {
+
+                fetch('/Empresa/GuardarReseñaReciclador', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        idUsuario: result.value.idUsuario,
+                        numEstrella: result.value.estrellas,
+                        idAsignacion: idAsignacion
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                           if (data.success) {
+        Swal.fire({
+            icon: 'success',
+            title: '¡Calificación registrada!',
+            text: 'Gracias por tu evaluación.',
+            confirmButtonColor: '#3085d6',
+            background: 'linear-gradient(#064d1a, black)',
+            color: 'white'
+        }).then(() => {
+
+            // GUARDAR EN LOCALSTORAGE
+            localStorage.setItem(`calificado_${idAsignacion}`, "true");
+
+            // OCULTAR BOTÓN
+            const btn = document.getElementById(`btnCalificar_${idAsignacion}`);
+            if (btn) btn.style.display = "none";
+
+
+    const acciones = btn.parentElement;
+
+                const img = document.createElement("img"); img.src = "/imagenes/YaCalifi.png"; img.style.width = "130px"; img.style.opacity = "0.9"; cont.appendChild(img); acciones.appendChild(cont);
+
+
+
+        });
+    }
+
+
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo conectar con el servidor.',
+                        confirmButtonColor: '#d33',
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                });
+
+            }
+
+        });
+
+    }
+</script>
+
+
+<script>
+    function mostrarBloqueoCalificacion() {
+        Swal.fire({
+            icon: 'warning',
+            title: '<span style="font-size:22px; font-weight:bold; color:white;">Acción no disponible</span>',
+            html: `
+                <p style="font-size:18px; color:white;">El cliente aún no ha confirmado la finalización de la recolección.</p>
+                <p style="font-size:16px; color:white;">Solo podrás calificar una vez que el cliente haya evaluado tu servicio.</p>
+            `,
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#3085d6',
+            background: 'linear-gradient(#064d1a, black)',
+            color: 'white',
+            customClass: { popup: 'swal-custom-popup' }
+        });
+    }
+</script>
+<script>
+    window.onload = () => {
+        const botones = document.querySelectorAll("[id^='btnCalificar_']");
+
+        botones.forEach(btn => {
+            const id = btn.id.replace("btnCalificar_", "");
+
+            if (localStorage.getItem(`calificado_${id}`) === "true") {
+
+                btn.style.display = "none";
+
+                // Ícono de bloqueo
+                const acciones = btn.parentElement;
+                const img = document.createElement("img");
+                img.src = "/imagenes/YaCalifi.png";
+                img.style.width = "130px";
+                img.style.height = "100px";
+                img.style.opacity = "0.4";
+                img.style.cursor = "not-allowed";
+                img.title = "Ya calificado";
+
+                acciones.appendChild(img);
+            }
+        });
+    };
+</script>
+
+

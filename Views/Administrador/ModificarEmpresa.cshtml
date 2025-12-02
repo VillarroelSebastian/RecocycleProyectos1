@@ -1,0 +1,106 @@
+﻿@model Web_Recocycle.Models.Empresa
+@{
+    ViewData["Title"] = "Modificar Empresa";
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/global.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Registro.css" />
+
+</head>
+<body>
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="registro-panel">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Modificar Empresa</h2>
+                <img src="~/imagenes/icono.png" class="logo-reciclaje" />
+            </div>
+
+            <form method="post" asp-action="ModificarEmpresa" enctype="multipart/form-data" class="form-registro">
+                <input type="hidden" asp-for="IdUsuario" />
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre Empresa</label>
+                        <input asp-for="NombreEmpresa" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Número de contacto</label>
+                        <input asp-for="Telefono" type="text" required />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group categorias">
+                        <label>Categorías que Maneja</label>
+                        <div class="checkbox-grid">
+                            @foreach (var cat in ViewBag.Categorias as List<Web_Recocycle.Models.Categoria>)
+                            {
+                                <label>
+                                    <input type="checkbox" name="categoria" value="@cat.IdCategoria"
+                                           @(Model.CategoriasSeleccionadas.Contains(cat.IdCategoria) ? "checked" : "") />
+                                    @cat.Nombre
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input asp-for="Correo" type="email" required />
+                    </div>
+                    <div class="form-group upload-logo">
+                        <label>Logo Actual</label>
+                        <div class="custom-upload">
+                            <label for="Logo">
+                                @if (Model.ImgLogo != null && Model.ImgLogo.Length > 0)
+                                {
+                                    <img id="previewLogo" src="data:image/png;base64,@Convert.ToBase64String(Model.ImgLogo)" alt="Logo actual" class="upload-preview" />
+                                }
+                                else
+                                {
+                                    <img id="previewLogo" src="/imagenes/icono-subir.png" alt="Subir logo" class="upload-preview" />
+                                }
+                            </label>
+                            <input type="file" id="Logo" name="Logo" accept="image/*" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-aceptar">ACEPTAR</button>
+                    <a asp-action="CrudEmpresa" class="btn-cancelar">CANCELAR</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const logoInput = document.getElementById('Logo');
+        const previewLogo = document.getElementById('previewLogo');
+
+        logoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewLogo.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>

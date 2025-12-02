@@ -1,0 +1,205 @@
+﻿.screen {
+    position: fixed;
+    opacity: 20%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/imagenes/FondoPantalla.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.container-welcome {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-bottom: 20px;
+}
+
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 30px;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 200px;
+    filter: drop-shadow(10px 10px 5px rgb(0, 0, 0));
+}
+
+.title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+    .title h1 {
+        font-size: 80px;
+        white-space: nowrap;
+        margin: 0;
+        background: linear-gradient(90deg, #00AEEF, #2ECC40);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .title hr {
+        width: 700px;
+        height: 7px;
+        border: none;
+        display: block;
+        background: linear-gradient(90deg, #00AEEF, #2ECC40);
+        background-clip: border-box;
+        -webkit-background-clip: border-box;
+        margin: 8px auto 0 auto;
+    }
+
+.options {
+    display: flex;
+    justify-content: center;
+    padding: 0 15px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 30px 40px;
+    border-radius: 25px;
+    width: 700px;
+    max-width: 90%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#Genero {
+    height: 37px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 0 8px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.boton {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.btn, .btnG, .btnC {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s;
+    height: 50px;
+    width: 180px;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+}
+
+.btnG {
+    background: #145A32;
+    color: white;
+}
+
+    .btnG:hover {
+        background: #117A37;
+        color: white;
+    }
+
+.btnC {
+    background: red;
+    color: white;
+}
+
+    .btnC:hover {
+        background: black;
+        color: white;
+    }
+
+@media (max-width: 767px) {
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+        padding-top: 15px;
+        margin-bottom: 10px;
+    }
+
+    .logo {
+        width: 130px;
+        margin-bottom: 5px;
+        filter: none;
+    }
+
+    .title {
+        position: static;
+        transform: none;
+    }
+
+        .title h1 {
+            font-size: 50px;
+        }
+
+        .title hr {
+            width: 80%;
+        }
+
+    .card {
+        padding: 20px 25px;
+        max-width: 95%;
+    }
+
+    .form-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .boton {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn, .btnG, .btnC {
+        width: 100%;
+        height: 45px;
+        font-size: 16px;
+    }
+}

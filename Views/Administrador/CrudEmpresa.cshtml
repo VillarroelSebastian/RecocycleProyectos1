@@ -1,0 +1,128 @@
+﻿
+@{
+    Layout = null;
+}
+@model List<Web_Recocycle.Models.Empresa>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/global.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Datos.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+</head>
+
+<body>
+
+<div class="admin-anuncio">
+@Html.Partial("_MenuAdministrador")
+
+    <div class="empresa-panel">
+        <!-- Aquí va todo tu contenido actual de empresa -->
+        <div class="empresa-header">
+            <h2>Registro de Empresa</h2>
+            <a asp-controller="Administrador" asp-action="RegistrarEmpresa" class="btn-imagen-registro" title="Registrar Empresa"></a>
+
+        </div>
+
+        <div class="empresa-table">
+            <table class="tabla-empresa">
+                <thead>
+                    <tr>
+                        <th>Logo</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Contacto</th>
+                        <th>Categorías</th>
+                        <th>Activo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var empresa in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (empresa.ImgLogo != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(empresa.ImgLogo);
+                                        <img class="logo-empresa" src="data:image/png;base64,@base64" alt="Logo" />
+                                    }
+                                </td>
+                                <td>@empresa.NombreEmpresa</td>
+                                <td>@empresa.Correo</td>
+                                <td>@empresa.Telefono</td>
+                                    <td>
+                                        @foreach (var cat in empresa.Categorias.Split(","))
+                                        {
+                                            <span class="badge">@cat.Trim()</span>
+                                        }
+                                    </td>
+
+                                <td>
+                                        <span class="estado @(empresa.Estado == 1 ? "activo" : "inactivo")">
+                                            @(empresa.Estado == 1 ? "Sí" : "No")
+                                        </span>
+
+                                </td>
+                                <td>
+                                    <div class="acciones">
+                                        <a asp-action="ModificarEmpresa" asp-route-id="@empresa.IdUsuario" class="btn-editar" title="Editar"></a>
+                                        <button onclick="confirmarEliminacion(@empresa.IdUsuario)" class="btn-eliminar" title="Eliminar"></button>
+
+                                        <a asp-action="DetalleEmpresa" asp-route-id="@empresa.IdUsuario" class="btn-detalles" title="Ver Detalles"></a>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6">No hay empresas registradas aún.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+  
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarEliminacion(idUsuario) {
+        Swal.fire({
+            title: '¿Eliminar empresa?',
+            html: '<p style="font-size:18px;">Esta acción no se puede deshacer.</p>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            background: 'linear-gradient(to bottom, #064d1a, black)',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/Administrador/EliminarEmpresa';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'idUsuario';
+                input.value = idUsuario;
+
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>
+</body>

@@ -1,0 +1,966 @@
+﻿@{
+    ViewData["Title"] = "Publicar";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/EstilosUsuarios/styleRegistroReciclaje.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Web_Recocycle.styles.css" asp-append-version="true" />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="screen">
+</div>
+
+<div class="container-welcome">
+    <div class="header">
+        <img src="~/imagenes/logo.png" alt="Logo" class="logo" />
+        <div class="title">
+            <h1>REGISTRO DE RECICLAJE</h1>
+            <hr />
+        </div>
+    </div>
+
+    <div class="card-contenedor">
+        <form class="formulario" asp-action="RegistrarPublicacion" method="post">
+            <div class="formulario-verde">
+                <div class="form-columna">
+                    <label for="Categoria">Seleccione la categoría:</label>
+                    <select id="categoria" name="Categoria" required>
+                        <option value="2">Plástico</option>
+                        <option value="4">Papel</option>
+                        <option value="3">Vídrio</option>
+                        <option value="1">Orgánico</option>
+                        <option value="5">Metal</option>
+                        <option value="6">Batería</option>
+                        <option value="7">Otros</option>
+                    </select>
+
+                    <div class="fila-descripcion">
+                        <label for="Descripcion">Descripción:</label>
+                        <textarea id="descripcion" name="Descripcion" rows="2" required></textarea>
+                    </div>
+
+                    <div class="titulo-horario" required>Seleccione el día y la hora:</div>
+
+                    <div class="fila-inputs">
+                        <label for="desde">Desde:</label>
+                        <input type="time" id="desde" name="desde" required/>
+                        <label for="hasta">Hasta:</label>
+                        <input type="time" id="hasta" name="hasta" required />
+                    </div>
+
+                    <div class="fila-fecha">
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" id="fecha" name="fecha" required/>
+                        <button type="button" class="btn-fecha">AÑADIR FECHA</button>
+                    </div>
+
+                    <div id="lista-Datos" class="lista-Datos">
+                        <ul class="lista-Fecha"></ul>
+                        <ul class="lista-Desde"></ul>
+                        <ul class="lista-Hasta"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mapa-columna">
+                <div class="imagenes-bloque">
+                    <div class="imagenes">
+                        <div id="img1" class="imagen-placeholder img1"></div>
+                        <div id="img2" class="imagen-placeholder img2"></div>
+                        <div id="img3" class="imagen-placeholder img3"></div>
+                    </div>
+                    <button type="button" class="btn-imagen">AÑADIR IMAGEN</button>
+
+                    <input type="file" id="file-input" accept=".jpg, .png" style="display: none;" />
+                </div>
+
+                <div class="mapa-contenedor">
+                    <div class="mapa-titulo">MARQUE SU UBICACIÓN</div>
+                    <div class="mapa-verde">
+
+                        <div id="map"></div>
+                    </div>
+
+                    <input type="number" id="latitud" name="Latitud" hidden />
+                    <input type="number" id="longitud" name="Longitud" hidden />
+                </div>
+            </div>
+
+        </form>
+
+        @*Script mapa*@
+
+<script>
+    var map = L.map('map').setView([-17.3895, -66.1568], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker;
+
+    map.on('click', function (e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+        }
+
+        document.getElementById("latitud").value = lat;
+        document.getElementById("longitud").value = lng;
+
+    });
+</script>
+@*                 if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+
+                document.getElementById("latitud").value = lat;
+                document.getElementById("longitud").value = lng;
+
+            }); *@
+        </script>
+
+        @*Script Add Imagenes*@
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const fileInput = document.getElementById('file-input');
+                const addButton = document.querySelector('.btn-imagen');
+                const maxImages = 3;
+                const placeholders = [
+                    document.getElementById('img1'),
+                    document.getElementById('img2'),
+                    document.getElementById('img3')
+                ];
+
+                let imageCount = 0;
+                let selectedFiles = [];
+
+                const updateImageCount = () => {
+                    imageCount = selectedFiles.length;
+
+                    if (imageCount < maxImages) {
+                        addButton.disabled = false;
+                        addButton.textContent = 'AÑADIR IMAGEN';
+                    } else {
+                        addButton.disabled = true;
+                        addButton.textContent = 'LÍMITE ALCANZADO';
+                    }
+                };
+
+                const redrawPlaceholders = () => {
+                    placeholders.forEach(p => {
+                        p.style.backgroundImage = 'none';
+                        p.classList.remove('has-image');
+                        p.removeAttribute("data-base64");
+                    });
+
+                    selectedFiles.forEach((file, index) => {
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            placeholders[index].dataset.base64 = e.target.result.split(",")[1];
+
+                            placeholders[index].style.backgroundImage = `url('${e.target.result}')`;
+                            placeholders[index].classList.add('has-image');
+                        };
+
+                        reader.readAsDataURL(file);
+                    });
+
+                    updateImageCount();
+                };
+
+
+
+                addButton.addEventListener('click', function() {
+                    if (imageCount < maxImages) {
+                        fileInput.click();
+                    } else {
+                        Swal.fire('Atención', '¡Has alcanzado el límite de ' + maxImages + ' imágenes!', 'warning');
+                    }
+                });
+
+                fileInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+
+                    if (!file) return;
+
+                    const fileType = file.type;
+                    if (fileType !== 'image/jpeg' && fileType !== 'image/png') {
+                        Swal.fire('Error', 'Solo se permiten archivos JPG o PNG.', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    selectedFiles.push(file);
+
+                    redrawPlaceholders();
+
+                    fileInput.value = '';
+                });
+
+                placeholders.forEach((placeholder, index) => {
+                    placeholder.addEventListener('click', function() {
+                        if (placeholder.classList.contains('has-image')) {
+
+                            const style = document.createElement('style');
+
+                            style.innerHTML = `
+                                .popup {
+                                    background: linear-gradient(#064d1a, black);
+                                    border-radius: 15px;
+                                    color: white !important;
+                                    position: relative;
+                                    overflow: hidden;
+                                }
+
+                                .titulo {
+                                    color: red;
+                                    font-size: 30px;
+                                    font-weight: bold;
+                                    padding-top: 15px;
+                                }
+
+                                .contenido {
+                                    text-align: center;
+                                    color: white;
+                                    font-size: 30px;
+                                    position: relative;
+                                    z-index: 1; /* Elevado sobre la imagen de fondo */
+                                    padding: 10px; /* Padding del contenido */
+                                }
+
+                                .imagen-fondo {
+                                    opacity: 0.2;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-image: url('/imagenes/FondoPantalla.jpg');
+                                    background-size: cover;
+                                    background-position: center;
+                                    z-index: 0;
+                                }
+
+                                .swal2-confirm.boton {
+                                    font-weight: bold;
+                                }
+                                .swal2-cancel.boton-cancelar {
+                                     font-weight: bold;
+                                }
+                            `;
+                            document.head.appendChild(style);
+                            Swal.fire({
+                                html: `
+                                    <div class="imagen-fondo"></div>
+                                    <div class="contenido">
+                                        <p style="margin-top: 10px;">
+                                            ¿Desea eliminar esta imagen?.
+                                        </p>
+                                    </div>
+                                `,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar',
+                                customClass: {
+                                    popup: 'popup',
+                                    confirmButton: 'boton',
+                                    cancelButton: 'boton-cancelar'
+                                }
+
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+
+                                    selectedFiles.splice(index, 1);
+
+                                    redrawPlaceholders();
+
+
+                                    const style = document.createElement('style');
+
+                            style.innerHTML = `
+                                .popup {
+                                    background: linear-gradient(#064d1a, black);
+                                    border-radius: 15px;
+                                    color: white !important;
+                                    position: relative;
+                                    overflow: hidden;
+                                }
+
+                                .contenido {
+                                    text-align: center;
+                                    color: white;
+                                    font-size: 30px;
+                                    position: relative;
+                                    z-index: 1; /* Elevado sobre la imagen de fondo */
+                                    padding: 10px; /* Padding del contenido */
+                                }
+
+                                .imagen-fondo {
+                                    opacity: 0.2;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-image: url('/imagenes/FondoPantalla.jpg');
+                                    background-size: cover;
+                                    background-position: center;
+                                    z-index: 0;
+                                }
+
+                                .swal2-confirm.boton {
+                                    font-weight: bold;
+                                }
+                            `;
+                            document.head.appendChild(style);
+                                    Swal.fire({
+                                        html: `
+                                            <div class="imagen-fondo"></div>
+                                            <div class="contenido">
+                                                <p style="margin-top: 10px;">
+                                                    La imagen ha sido eliminada.
+                                                </p>
+                                            </div>
+                                        `,
+                                        icon: 'success',
+                                        confirmButtonColor: '#d33',
+                                        confirmButtonText: 'CERRAR',
+                                        customClass: {
+                                            popup: 'popup',
+                                            confirmButton: 'boton',
+                                        }
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
+
+                redrawPlaceholders();
+            });
+        </script>
+
+        @*Script Date and Hours*@
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const desdeInput = document.getElementById('desde');
+                const hastaInput = document.getElementById('hasta');
+                const fechaInput = document.getElementById('fecha');
+                const addButton = document.querySelector('.btn-fecha');
+
+                const listaFechaUL = document.querySelector('.lista-Fecha');
+                const listaDesdeUL = document.querySelector('.lista-Desde');
+                const listaHastaUL = document.querySelector('.lista-Hasta');
+
+
+                const removeRow = (index) => {
+                    if (index > -1) {
+                        listaFechaUL.children[index].remove();
+                        listaDesdeUL.children[index].remove();
+                        listaHastaUL.children[index].remove();
+                    }
+                };
+
+                const loadRowToInputs = (index) => {
+                    if (index > -1) {
+                        const targetFecha = listaFechaUL.children[index].textContent;
+                        const targetDesde = listaDesdeUL.children[index].textContent;
+                        const targetHasta = listaHastaUL.children[index].textContent;
+
+                        fechaInput.value = targetFecha;
+                        desdeInput.value = targetDesde;
+                        hastaInput.value = targetHasta;
+
+                        desdeInput.focus();
+                    }
+                };
+
+                const handleRowClick = function(e) {
+
+                    const li = e.currentTarget;
+                    const ul = li.parentElement;
+                    const index = Array.prototype.indexOf.call(ul.children, li);
+
+                    if (index > -1) {
+
+                        const style = document.createElement('style');
+
+                            style.innerHTML = `
+                                .popup {
+                                    background: linear-gradient(#064d1a, black);
+                                    border-radius: 15px;
+                                    color: white !important;
+                                    position: relative;
+                                    overflow: hidden;
+                                }
+
+                                .contenido {
+                                    text-align: center;
+                                    color: white;
+                                    font-size: 30px;
+                                    position: relative;
+                                    z-index: 1; /* Elevado sobre la imagen de fondo */
+                                    padding: 10px; /* Padding del contenido */
+                                }
+
+                                .imagen-fondo {
+                                    opacity: 0.2;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-image: url('/imagenes/FondoPantalla.jpg');
+                                    background-size: cover;
+                                    background-position: center;
+                                    z-index: 0;
+                                }
+
+                                .swal2-confirm.btn-edit {
+                                    background-color: #007bff !important;
+                                    color: white !important;
+                                    border: 2px solid transparent !important;
+                                    transition: all 0.3s ease !important;
+                                }
+
+                                    .swal2-confirm.btn-edit:hover {
+                                        background-color: white !important;
+                                        color: #007bff !important;
+                                        border: 3px solid #007bff !important;
+                                    }
+
+                                .swal2-deny.btn-Eliminar {
+                                    background-color: #dc3545 !important;
+                                    color: white !important;
+                                    transition: background-color 0.3s ease !important;
+                                }
+
+                                    .swal2-deny.btn-Eliminar:hover {
+                                        background-color: black !important;
+                                    }
+
+                                .swal2-cancel.btn-Cancel {
+                                    background-color: #6c757d !important;
+                                    color: white !important;
+                                    transition: background-color 0.3s ease !important;
+                                }
+
+                                    .swal2-cancel.btn-Cancel:hover {
+                                        background-color: #495057 !important;
+                                    }
+                            `;
+                            document.head.appendChild(style);
+                        Swal.fire({
+                            html: `
+                                    <div class="imagen-fondo"></div>
+                                    <div class="contenido">
+                                        <p style="margin-top: 10px;">
+                                            ¿Qué acciones realizará con los datos?.
+                                        </p>
+                                    </div>
+                            `,
+                            icon: 'question',
+                            showDenyButton: true,
+                            showCancelButton: true,
+                            confirmButtonText: 'Editar',
+                            denyButtonText: 'Eliminar',
+                            cancelButtonText: 'Cancelar',
+
+                            confirmButtonColor: '#007bff',
+                            denyButtonColor: '#dc3545',
+
+                            customClass: {
+                                    popup: 'popup',
+                                    confirmButton: 'btn-edit',
+                                    denyButton: 'btn-Eliminar',
+                                    cancelButton: 'btn-Cancel',
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                loadRowToInputs(index);
+                                removeRow(index);
+
+                            } else if (result.isDenied) {
+                                removeRow(index);
+
+                                const style = document.createElement('style');
+
+                                style.innerHTML = `
+                                    .popup {
+                                        background: linear-gradient(#064d1a, black);
+                                        border-radius: 15px;
+                                        color: white !important;
+                                        position: relative;
+                                        overflow: hidden;
+                                    }
+
+                                    .contenido {
+                                        text-align: center;
+                                        color: white;
+                                        font-size: 30px;
+                                        position: relative;
+                                        z-index: 1;
+                                        padding: 10px;
+                                    }
+
+                                    .imagen-fondo {
+                                        opacity: 0.2;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        background-image: url('/imagenes/FondoPantalla.jpg');
+                                        background-size: cover;
+                                        background-position: center;
+                                        z-index: 0;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar {
+                                        background-color: #FF0000 !important;
+                                        color: white !important;
+                                        transition: background-color 0.3s ease !important;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar:hover {
+                                        background-color: black !important;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                                Swal.fire({
+                                    html: `
+                                        <div class="imagen-fondo"></div>
+                                        <div class="contenido">
+                                            <p style="margin-top: 10px;">
+                                                Los datos fueron eliminados.
+                                            </p>
+                                        </div>
+                                    `,
+                                    icon: 'success',
+
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'CERRAR',
+                                    confirmButtonColor: '#FF0000',
+
+                                    customClass: {
+                                        popup: 'popup',
+                                        confirmButton: 'btn-cerrar'
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                addButton.addEventListener('click', function() {
+                    const desde = desdeInput.value;
+                    const hasta = hastaInput.value;
+                    const fecha = fechaInput.value;
+
+                    const fechaSelecc = new Date(fecha);
+
+                    const hoy = new Date();
+                    const hoyActual = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+                    if (desde === "" || hasta === "" || fecha === "") {
+
+                        const style = document.createElement('style');
+
+                        style.innerHTML = `
+                                    .popup {
+                                        background: linear-gradient(#064d1a, black);
+                                        border-radius: 15px;
+                                        color: white !important;
+                                        position: relative;
+                                        overflow: hidden;
+                                    }
+
+                                    .contenido {
+                                        text-align: center;
+                                        color: white;
+                                        font-size: 30px;
+                                        position: relative;
+                                        z-index: 1;
+                                        padding: 10px;
+                                    }
+
+                                    .imagen-fondo {
+                                        opacity: 0.2;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        background-image: url('/imagenes/FondoPantalla.jpg');
+                                        background-size: cover;
+                                        background-position: center;
+                                        z-index: 0;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar {
+                                        background-color: #dc3545 !important;
+                                        color: white !important;
+                                        transition: background-color 0.3s ease !important;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar:hover {
+                                        background-color: black !important;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                                Swal.fire({
+                                    html: `
+                                        <div class="imagen-fondo"></div>
+                                        <div class="contenido">
+                                            <p style="margin-top: 10px;">
+                                                Por favor, complete los campos requeridos.
+                                            </p>
+                                        </div>
+                                    `,
+                                    icon: 'error',
+
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'CERRAR',
+                                    confirmButtonColor: '#FF0000',
+
+                                    customClass: {
+                                        popup: 'popup',
+                                        confirmButton: 'btn-cerrar',
+                                    }
+                                });
+
+                        return;
+                    }
+
+                    else if (desde > hasta || desde === hasta){
+
+                        const style = document.createElement('style');
+
+                        style.innerHTML = `
+                                    .popup {
+                                        background: linear-gradient(#064d1a, black);
+                                        border-radius: 15px;
+                                        color: white !important;
+                                        position: relative;
+                                        overflow: hidden;
+                                    }
+
+                                    .contenido {
+                                        text-align: center;
+                                        color: white;
+                                        font-size: 30px;
+                                        position: relative;
+                                        z-index: 1;
+                                        padding: 10px;
+                                    }
+
+                                    .imagen-fondo {
+                                        opacity: 0.2;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        background-image: url('/imagenes/FondoPantalla.jpg');
+                                        background-size: cover;
+                                        background-position: center;
+                                        z-index: 0;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar {
+                                        background-color: #dc3545 !important;
+                                        color: white !important;
+                                        transition: background-color 0.3s ease !important;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar:hover {
+                                        background-color: black !important;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                                Swal.fire({
+                                    html: `
+                                        <div class="imagen-fondo"></div>
+                                        <div class="contenido">
+                                            <p style="margin-top: 10px;">
+                                                Error, La hora inicial no puede ser mayor o igual a la hora final.
+                                            </p>
+                                        </div>
+                                    `,
+                                    icon: 'error',
+
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'CERRAR',
+                                    confirmButtonColor: '#FF0000',
+
+                                    customClass: {
+                                        popup: 'popup',
+                                        confirmButton: 'btn-cerrar',
+                                    }
+                                });
+                        return;
+                    }
+
+                    else if (fechaSelecc < hoyActual){
+
+                        const style = document.createElement('style');
+
+                        style.innerHTML = `
+                                    .popup {
+                                        background: linear-gradient(#064d1a, black);
+                                        border-radius: 15px;
+                                        color: white !important;
+                                        position: relative;
+                                        overflow: hidden;
+                                    }
+
+                                    .contenido {
+                                        text-align: center;
+                                        color: white;
+                                        font-size: 30px;
+                                        position: relative;
+                                        z-index: 1;
+                                        padding: 10px;
+                                    }
+
+                                    .imagen-fondo {
+                                        opacity: 0.2;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        background-image: url('/imagenes/FondoPantalla.jpg');
+                                        background-size: cover;
+                                        background-position: center;
+                                        z-index: 0;
+                                    }
+
+                                    .swal2-confirm.btn-cerrar {
+                                        background-color: #dc3545 !important;
+                                        color: white !important;
+                                        transition: background-color 0.3s ease !important;
+                                    }
+
+                                        .swal2-confirm.btn-cerrar:hover {
+                                            background-color: black !important;
+                                        }
+                                `;
+                                document.head.appendChild(style);
+                                Swal.fire({
+                                    html: `
+                                        <div class="imagen-fondo"></div>
+                                        <div class="contenido">
+                                            <p style="margin-top: 10px;">
+                                                Error, La fecha seleccionada no puede ser menor o igual a la fecha Actual.
+                                            </p>
+                                        </div>
+                                    `,
+                                    icon: 'error',
+
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'CERRAR',
+                                    confirmButtonColor: '#FF0000',
+
+                                    customClass: {
+                                        popup: 'popup',
+                                        confirmButton: 'btn-cerrar',
+                                    }
+                                });
+                        return;
+                    }
+
+                    const newFechaLi = document.createElement('li');
+                    newFechaLi.textContent = fecha;
+                    newFechaLi.classList.add('editable-li');
+
+                    const newDesdeLi = document.createElement('li');
+                    newDesdeLi.textContent = desde;
+                    newDesdeLi.classList.add('editable-li');
+
+                    const newHastaLi = document.createElement('li');
+                    newHastaLi.textContent = hasta;
+                    newHastaLi.classList.add('editable-li');
+
+                    newFechaLi.addEventListener('click', handleRowClick);
+                    newDesdeLi.addEventListener('click', handleRowClick);
+                    newHastaLi.addEventListener('click', handleRowClick);
+
+                    listaFechaUL.appendChild(newFechaLi);
+                    listaDesdeUL.appendChild(newDesdeLi);
+                    listaHastaUL.appendChild(newHastaLi);
+
+                    desdeInput.value = "";
+                    hastaInput.value = "";
+                    fechaInput.value = "";
+                });
+
+                const dynamicStyle = document.createElement('style');
+                dynamicStyle.innerHTML = `.editable-li { cursor: pointer; padding: 5px; border-bottom: 1px dashed #eee; transition: background-color 0.1s; } .editable-li:hover { background-color: #f0f0f0; }`;
+                document.head.appendChild(dynamicStyle);
+            });
+        </script>
+
+        <div class="botones-finales">
+            <a asp-action="PerfilReciclador" asp-controller="Usuario" class="cancelar">CANCELAR</a>
+            <button type="submit" id="btnConfirmar" class="confirmar">CONFIRMAR</button>
+        </div>
+
+        @*Script list Dates and images*@
+
+        @*Message*@
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    @{
+                                int? registro = TempData["Registrado"] as int?;
+                    }
+                    @if (registro == 1)
+                    {
+                                    <text>registroConfirmado();</text>
+                    }
+                    else if (registro == 0)
+                    {
+                                    <text>registroNoConfirmado();</text>
+                    }
+
+                    @{
+                                    TempData["Registrado"] = "";
+                    }
+                });
+
+                function registroConfirmado() {
+
+
+
+                    Swal.fire({
+                        title: '<span style="font-size:35px; font-weight:bold; color:white;">REGISTRO CONFIRMADO</span>',
+                        html: `
+                            <p style="font-size:25px; margin:10px 0; color:white;">
+                                Los datos ingresados fueron guardados correctamente.
+                            </p>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'CERRAR',
+                        confirmButtonColor: '#8B0000',
+                        background: 'linear-gradient(#064d1a, black)'
+                    }).then(() => {
+                        window.location.href = '@Url.Action("PerfilReciclador", "Usuario")';
+                    });
+                }
+
+                function registroNoConfirmado() {
+                    Swal.fire({
+                        title: '<span style="font-size:35px; font-weight:bold; color:white;">REGISTRO NO CONFIRMADO</span>',
+                        html: `
+                            <p style="font-size:25px; margin:10px 0; color:white;">
+                                Ha ocurrido un error vuelve a intentarlo más tarde.
+                            </p>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'CERRAR',
+                        confirmButtonColor: '#8B0000',
+                        background: 'linear-gradient(#064d1a, black)'
+                    }).then(() => {
+                        window.location.href = '@Url.Action("RegistroReciclaje", "Usuario")';
+                    });
+                }
+
+                @*Comienzo click*@
+
+                document.getElementById("btnConfirmar").addEventListener("click", async function(e) {
+                    e.preventDefault();
+
+
+                    const categoria = document.getElementById("categoria").value;
+                    const descripcion = document.getElementById("descripcion").value;
+                    const latitud = document.getElementById("latitud").value;
+                    const longitud = document.getElementById("longitud").value;
+                    const fechas = document.querySelectorAll(".lista-Fecha li");
+
+
+                    if (!categoria || !descripcion) {
+                        mostrarError('Complete todos los campos requeridos');
+                        return;
+                    }
+
+                    if (!latitud || !longitud) {
+                        mostrarError('Debe seleccionar una ubicación en el mapa');
+                        return;
+                    }
+
+                    if (fechas.length === 0) {
+                        mostrarError('Debe agregar al menos una fecha disponible');
+                        return;
+                    }
+
+                    const fechasList = document.querySelectorAll(".lista-Fecha li");
+                    const desdeList = document.querySelectorAll(".lista-Desde li");
+                    const hastaList = document.querySelectorAll(".lista-Hasta li");
+
+                    document.querySelectorAll('input[name^="FechasDisponibles"]').forEach(input => input.remove());
+
+                    for (let i = 0; i < fechasList.length; i++) {
+                        agregarCampoOculto(`FechasDisponibles[${i}].Fecha`, fechasList[i].textContent.trim());
+                        agregarCampoOculto(`FechasDisponibles[${i}].DesdeHora`, desdeList[i].textContent.trim());
+                        agregarCampoOculto(`FechasDisponibles[${i}].HastaHora`, hastaList[i].textContent.trim());
+                    }
+
+                    const placeholders = document.querySelectorAll(".imagen-placeholder");
+                    let imgCount = 0;
+
+                    document.querySelectorAll('input[name^="Imagenes"]').forEach(input => input.remove());
+
+                    for (const div of placeholders) {
+                        const base64Data = div.dataset.base64;
+                        if (base64Data) {
+                            agregarCampoOculto(`Imagenes[${imgCount}].Imagenes`, base64Data);
+                            imgCount++;
+                        }
+                    }
+                    document.querySelector('.formulario').submit();
+                });
+
+                function agregarCampoOculto(nombre, valor) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = nombre;
+                    input.value = valor;
+                    document.querySelector('.formulario').appendChild(input);
+                }
+
+                function mostrarError(mensaje) {
+                    if (typeof Swal === 'undefined') {
+                        alert(mensaje);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Error',
+                        text: mensaje,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#FF0000'
+                    });
+                }
+            </script>
+        }
+    </div>
+</div>

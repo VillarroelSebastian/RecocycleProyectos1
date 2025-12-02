@@ -1,0 +1,471 @@
+﻿@model Web_Recocycle.Models.UsuarioRecicladorViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Perfil";
+
+    var premioImg = Model.Premio?.ImgPremio != null
+    ? $"data:image/jpeg;base64,{Convert.ToBase64String(Model.Premio.ImgPremio)}"
+    : "/imagenes/PerfilPredeterminado.jpg";
+
+
+    var premioNombre = Model.Premio?.Nombre ?? "Sin premio disponible";
+    var premioFecha = Model.Premio?.FechaLimite.ToString("dd/MM/yyyy");
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/EstilosUsuarios/stylePerfilUsuario.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Web_Recocycle.styles.css" asp-append-version="true" />
+
+<script src="~/js/scriptUsuario.jss" asp-append-version="true"></script>
+
+<div class="screen">
+</div>
+
+<div class="container-welcome">
+    <div class="options">
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="user-info">
+                    <a asp-action="ModificarDatos" asp-controller="Usuario">
+                    <img class="avatar"
+                         src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Reciclador.ImgPerfil)"
+                         alt="Foto de perfil" />
+                    </a>
+                    <div>
+                        <h3>@Model.Reciclador.Nombres @Model.Reciclador.Apellidos</h3>
+                        <h3>@Model.Usuario.Correo</h3>
+                        @* <h3>@Model.Usuario.Puntos</h3> *@
+                    </div>
+
+
+                </div>
+
+
+                <div class="user-score">
+
+                    <h3>@Model.Reciclador.Puntos pts.</h3>
+
+                    <button class="btn-action btn-Notify"></button>
+
+                    <a asp-action="InicioSesionUsuario" asp-controller="Home" class="btnC">CERRAR SESIÓN</a>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card-body">
+
+                <div class="ranking">
+
+                    <h3>Top 10 Recicladores</h3>
+
+                    @if (Model.TopRecicladores == null || !Model.TopRecicladores.Any())
+
+                    {
+
+                        <p>No hay datos en el ranking.</p>
+
+                    }
+
+                    else
+
+                    {
+
+                        <ol>
+
+                            @for (int i = 0; i < Model.TopRecicladores.Count; i++)
+
+                            {
+
+                                var r = Model.TopRecicladores[i];
+
+                                <li class="rank-item rank-@((i + 1))">
+
+                                    <span class="position">@((i + 1)).</span>
+
+                                    <img class="imgPerfil" src="@(r.ImgPerfil != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(r.ImgPerfil)}" : "/imagenes/PerfilPredeterminado.jpg")" />
+
+                                    <span class="name">@r.Nombres @r.Apellidos</span>
+
+                                    <span class="points">@r.Puntos pts</span>
+
+                                </li>
+                            }
+                        </ol>
+                    }
+                </div>
+
+                <div class="actions">
+
+                    <h3>ES TIEMPO DE RECICLAR</h3>
+                    <a class="btn-action btn-recycle" asp-action="RegistroReciclaje" asp-controller="Usuario">RECICLAR</a>
+
+                    <h3>MIRA TUS PUBLICACIONES</h3>
+                    <a class="btn-action btn-publi" asp-action="Publicaciones" asp-controller="Usuario">VER PUBLICACIONES</a>
+
+                    <h3>PARTICIPA Y GANA</h3>
+                    <button class="btn-action btn-prize" onclick="PremioActual()">VER PREMIO</button>
+
+                    <script>
+                        function PremioActual() {
+
+                            const premioImg = "@premioImg";
+                            const premioNombre = "@premioNombre";
+                            const premioFecha = "@premioFecha";
+
+                            const style = document.createElement('style');
+
+                            style.innerHTML = `
+                                .premio-popup {
+                                    background: linear-gradient(#064d1a, black);
+                                    border-radius: 15px;
+                                    color: white;
+                                    position: relative;
+                                    overflow: hidden;
+                                }
+
+                                .premio-titulo {
+                                    font-size: 40px;
+                                    font-weight: bold;
+                                    color: white;
+                                }
+
+                                .premio-contenido {
+                                    text-align: center;
+                                    color: white;
+                                    position: relative;
+                                    z-index: 1;
+                                }
+
+                                .premio-contenido h2 {
+                                    font-size: 30px;
+                                    margin: 10px 0;
+                                }
+
+                                .premio-imagen-fondo {
+                                    opacity: 0.2;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-image: url('/imagenes/FondoPantalla.jpg');
+                                    background-size: cover;
+                                    background-position: center;
+                                    z-index: 0;
+                                }
+
+                                .premio-contenido img {
+                                    width: 200px;
+                                    margin: 15px 0;
+                                    border-radius: 10px;
+                                    z-index: 1;
+                                    position: relative;
+                                }
+
+                                .premio-nombre {
+                                    font-size: 24px;
+                                    margin: 10px 0;
+                                    padding: 10px;
+                                    border-radius: 10px;
+                                    background-color: #8B0000;
+                                }
+
+                                .premio-contenido p {
+                                    font-size: 18px;
+                                    margin-top: 10px;
+                                }
+
+                                .swal2-confirm.premio-boton {
+                                    background-color: #8B0000 !important;
+                                    color: white !important;
+                                    transition: background-color 0.3s ease;
+                                }
+                                    .swal2-confirm.premio-boton:hover {
+                                        background-color: black !important;
+                                    }
+                            `;
+                            document.head.appendChild(style);
+
+                        Swal.fire({
+                            title: '<span class="premio-titulo">PREMIO</span>',
+                            html: `
+                                <div class="premio-imagen-fondo"></div>
+                                <div class="premio-contenido">
+                                    <h2>1er Premio Recycle</h2>
+                                    <img src="${premioImg}" alt="Imagen del Premio" class="premio-imagen" />
+                                    <div class="premio-nombre">${premioNombre}</div>
+                                    <p>Disponible hasta el: <strong>${premioFecha}</strong></p>
+                                </div> 
+                            `,
+                            confirmButtonText: 'CERRAR',
+                            confirmButtonColor: '#8B0000',
+                            customClass: {
+                                popup: 'premio-popup',
+                                confirmButton: 'premio-boton'
+                            },
+                            width: 500,
+                            padding: '20px'
+                        }).then(() => {
+                            window.location.href = '@Url.Action("PerfilReciclador", "Usuario")';
+                        });
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .estrella {
+        color: #ccc;
+        font-size: 32px;
+        margin: 0 4px;
+        transition: color 0.2s;
+    }
+
+    .estrella.selected {
+        color: gold;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelector('.btn-Notify').addEventListener('click', () => {
+            fetch('/Usuario/ObtenerNotificaciones')
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data.pendientes);
+                    let html = '<div style="text-align:left;">';
+
+                    // Sección 1: Interesados
+                    html += '<h3 style="color:#DAFF00;">Empresas interesadas</h3>';
+                    if (data.pendientes.length === 0) {
+                        html += '<p style="color:white;">No hay empresas interesadas.</p>';
+                    } else {
+                                data.pendientes.forEach(e => {
+            html += `
+                <div style="margin-bottom:10px; border-bottom:1px solid #ccc;">
+                            <strong style="color:white;">${e.nombreEmpresa}</strong>
+        <span style="color:#FFD700; font-weight:bold;"> ★ ${e.promedioEstrellas ?? 0}</span><br/>
+
+                    <span style="color:white;">${e.categoria}: ${e.descripcion}</span><br/>
+                   ${e.fecha ? `<span style="color:white;">Fecha: ${e.fecha} | Horario: ${e.desdeHora} - ${e.hastaHora}</span><br/>` : ''}
+
+
+                    <button class="btn-op" onclick="confirmarAsignacion(${e.idAsignacion})">
+                         <img src="/imagenes/accept-removebg-preview.png"> Aceptar
+                    </button>
+                    <button class="btn-op btn-rechazar" onclick="rechazarAsignacion(${e.idAsignacion})">
+                         <img src="/imagenes/rechazar-removebg-preview.png"> Rechazar
+                    </button>
+                </div>
+            `;
+        });
+
+                    }
+
+                    // Sección 2: Aceptados
+                    html += '<h3 style="color:#DAFF00; margin-top:20px;">Empresas aceptadas</h3>';
+                    if (data.confirmadas.length === 0) {
+                        html += '<p style="color:white;">No hay empresas aceptadas aún.</p>';
+                    } else {
+                        data.confirmadas.forEach(e => {
+                            html += `
+                                <div style="margin-bottom:10px; border-bottom:1px solid #ccc;">
+                                    <strong style="color:white;">${e.nombreEmpresa}</strong><br/>
+                                    <span style="color:white;">${e.categoria}: ${e.descripcion}</span><br/>
+                                <button class="btn-op btn-calificar" onclick="calificarEmpresa(${e.idAsignacion}, ${e.idEmpresa}, '${e.nombreEmpresa}', '${e.categoria}')">
+                                        ★ Calificar
+                                </button>
+
+
+
+
+                                </div>
+                            `;
+                        });
+                    }
+
+                    html += '</div>';
+
+                    Swal.fire({
+                        title: '<span style="font-size:22px; font-weight:bold; color:white;">Notificaciones</span>',
+                        html: html,
+                        showConfirmButton: false,
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                });
+        });
+
+  
+        function confirmarAsignacion(id) {
+            fetch('/Usuario/ConfirmarAsignacion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idAsignacion: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Asignación confirmada',
+                        text: 'La empresa fue aceptada correctamente.',
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al confirmar',
+                        text: 'No se pudo confirmar la asignación.',
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                }
+            });
+        }
+
+        // ✅ Función para rechazar asignación
+        function rechazarAsignacion(id) {
+            fetch('/Usuario/RechazarAsignacion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idAsignacion: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Asignación rechazada',
+                        text: 'La empresa fue rechazada correctamente.',
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al rechazar',
+                        text: 'No se pudo rechazar la asignación.',
+                        background: 'linear-gradient(#064d1a, black)',
+                        color: 'white'
+                    });
+                }
+            });
+        }
+    </script>
+    <script>
+        function calificarEmpresa(idAsignacion, idEmpresa, nombreEmpresa, categoria) {
+            Swal.fire({
+                title: `<span style="font-size:24px; font-weight:bold; color:white;">Calificar a ${nombreEmpresa}</span>`,
+                html: `
+                    <div style="max-height:400px; overflow:hidden;">
+                        <p style="font-size:18px; color:white;">Categoría: <strong>${categoria}</strong></p>
+                        <div style="margin:10px 0;">
+                            <label style="color:white;">Puntuación:</label><br/>
+                            <div id="rating-stars" style="font-size:24px;"></div>
+                        </div>
+                    </div>
+                `,
+                didOpen: () => {
+                    const container = document.getElementById('rating-stars');
+                    container.innerHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        const star = document.createElement('span');
+                        star.textContent = '★';
+                        star.style.cursor = 'pointer';
+                        star.classList.add('estrella');
+                        star.onclick = () => {
+                            container.querySelectorAll('span').forEach((s, index) => {
+                                s.classList.toggle('selected', index < i);
+                            });
+                        };
+                        container.appendChild(star);
+                    }
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Enviar',
+                cancelButtonText: 'Cancelar',
+                background: 'linear-gradient(#064d1a, black)',
+                customClass: {
+                    popup: 'swal-custom-popup'
+                },
+                preConfirm: () => {
+                    const estrellas = document.querySelectorAll('#rating-stars span.selected').length;
+                    if (estrellas < 1 || estrellas > 5) {
+                        Swal.showValidationMessage('Selecciona entre 1 y 5 estrellas.');
+                        return false;
+                    }
+                    return estrellas;
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    // 1. Finalizar asignación
+                    fetch('/Usuario/FinalizarAsignacion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ idAsignacion: idAsignacion })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // 2. Guardar reseña
+                            console.log("Enviando reseña a idUsuario:", idEmpresa);
+
+                            fetch('/Usuario/GuardarReseña', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    idUsuario: idEmpresa,
+                                    numEstrella: result.value
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(respuesta => {
+                                if (respuesta.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Calificación registrada!',
+                                        text: 'La empresa fue calificada correctamente.',
+                                        confirmButtonColor: '#3085d6',
+                                        background: 'linear-gradient(#064d1a, black)',
+                                        color: 'white'
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error al guardar reseña',
+                                        text: 'La asignación se finalizó, pero no se guardó la calificación.',
+                                        confirmButtonColor: '#d33',
+                                        background: 'linear-gradient(#064d1a, black)',
+                                        color: 'white'
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al finalizar',
+                                text: 'No se pudo finalizar la asignación.',
+                                confirmButtonColor: '#d33',
+                                background: 'linear-gradient(#064d1a, black)',
+                                color: 'white'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+
+}

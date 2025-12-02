@@ -1,0 +1,64 @@
+﻿@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<div class="mennu">
+    <div class="rectangle"></div>
+    <div class="div"></div>
+    <div class="rectangle-2"></div>
+
+    <div class="text-wrapper">Menu</div>
+
+    <!-- Inicio -->
+    <div class="text-wrapper-4 @(currentAction == "Index" ? "activo" : "")"
+         onclick="location.href='@Url.Action("Index", "Administrador")'">
+        Inicio
+    </div>
+    <img class="casa @(currentAction == "Index" ? "activo" : "")"
+         src="@Url.Content("~/imagenes/home.png")"
+         onclick="location.href='@Url.Action("Index", "Administrador")'" />
+
+    <!-- Ranking -->
+    <div class="text-wrapper-2 @(currentAction == "Ranking" ? "activo" : "")"
+         onclick="location.href='@Url.Action("Ranking", "Administrador")'">
+        Ranking
+    </div>
+    <img class="tabla-de @(currentAction == "Ranking" ? "activo" : "")"
+         src="@Url.Content("~/imagenes/Ranking.png")"
+         onclick="location.href='@Url.Action("Ranking", "Administrador")'" />
+
+    <!-- Empresas -->
+    <div class="text-wrapper-3 @(currentAction == "CrudEmpresa" ? "activo" : "")"
+         onclick="location.href='@Url.Action("CrudEmpresa", "Administrador")'">
+        Empresas
+    </div>
+    <img class="empresa @(currentAction == "CrudEmpresa" ? "activo" : "")"
+         src="@Url.Content("~/imagenes/Empresa.png")"
+         onclick="location.href='@Url.Action("CrudEmpresa", "Administrador")'" />
+
+    <!-- Premio -->
+    <div class="text-wrapper-5 @(currentAction == "Premio" ? "activo" : "")"
+         onclick="location.href='@Url.Action("Premio", "Administrador")'">
+        Premio
+    </div>
+    <img class="premio @(currentAction == "Premio" ? "activo" : "")"
+         src="@Url.Content("~/imagenes/Premio.png")"
+         onclick="location.href='@Url.Action("Premio", "Administrador")'" />
+
+    <!-- Reporte -->
+    <div class="text-wrapper-6 @(currentAction == "Reporte" ? "activo" : "")"
+         onclick="location.href='@Url.Action("Reporte", "Administrador")'">
+        Reporte
+    </div>
+    <img class="reporte @(currentAction == "Reporte" ? "activo" : "")"
+         src="@Url.Content("~/imagenes/IconoReporte.png")"
+         onclick="location.href='@Url.Action("Reporte", "Administrador")'" />
+
+    <img class="menu" src="@Url.Content("~/imagenes/Desplegable.png")" />
+    <img class="line" src="@Url.Content("~/img/line-4.svg")" />
+
+    <img class="logout-icon"
+         src="@Url.Content("~/imagenes/cerrarSesion.png")"
+         onclick="location.href='@Url.Action("Index", "Home")'" />
+
+</div>

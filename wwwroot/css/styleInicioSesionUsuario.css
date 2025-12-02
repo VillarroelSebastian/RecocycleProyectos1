@@ -1,0 +1,170 @@
+﻿.screen {
+    position: fixed;
+    opacity: 20%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/imagenes/FondoPantalla.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.container-welcome {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 20px;
+}
+
+.logo {
+    width: 200px;
+    filter: drop-shadow(10px 10px 5px rgb(0, 0, 0));
+}
+
+.title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+    .title h1 {
+        font-size: 100px;
+        white-space: nowrap;
+        margin: 0;
+        background: linear-gradient(90deg, #00AEEF, #2ECC40);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .title hr {
+        width: 700px;
+        height: 7px;
+        border: none;
+        display: block;
+        background: linear-gradient(90deg, #00AEEF, #2ECC40);
+        background-clip: border-box;
+        -webkit-background-clip: border-box;
+        margin: 8px auto 0 auto;
+    }
+
+.container-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding-top: 0;
+    padding-bottom: 20px;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 350px;
+    max-width: 90%;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.btnG {
+    display: inline-block;
+    background: #145A32;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+    font-size: 20px;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+}
+
+    .btnG:hover {
+        background: #117A37;
+        color: black;
+    }
+
+.form-actions {
+    margin-top: 20px;
+}
+
+.register-text {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+    .register-text a {
+        color: dodgerblue;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+@media (max-width: 991px) {
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 5px;
+        padding-top: 15px;
+    }
+
+    .logo {
+        width: 130px;
+        margin-bottom: 5px;
+        filter: none;
+    }
+
+    .title {
+        position: static;
+        transform: none;
+    }
+
+        .title h1 {
+            font-size: 50px;
+        }
+
+        .title hr {
+            width: 80%;
+        }
+
+    .container-login {
+        min-height: 50vh;
+        padding-bottom: 10px;
+    }
+}

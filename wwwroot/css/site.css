@@ -1,0 +1,16 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Franklin Gothic';
+}
+
+/* Fondo completo */
+body {
+    background: linear-gradient(#064d1a, black);
+    background-size: cover;
+    color: #000000;
+    background-attachment: fixed;
+}
+

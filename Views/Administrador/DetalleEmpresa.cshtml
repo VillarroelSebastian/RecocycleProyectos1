@@ -1,0 +1,66 @@
+﻿@{
+    Layout = null;
+}
+@model Web_Recocycle.Models.DetalleEmpresaViewModel
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/global.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Datos.css" />
+    
+
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/Detalle.css" />
+
+</head>
+<div class="layout">
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="empresa-panel">
+        <div class="empresa-header">
+            <img src="data:image/png;base64,@Convert.ToBase64String(Model.ImgLogo)" class="empresa-logo" />
+            <div class="empresa-info">
+                <h2>@Model.NombreEmpresa</h2>
+                <p><strong>Contacto:</strong> @Model.Correo</p>
+                <p>
+                    <strong>Estado:</strong>
+                    <span class="badge @(Model.Estado == 1 ? "activo" : "inactivo")">
+                        @(Model.Estado == 1 ? "Activo" : "Inactivo")
+                    </span>
+                </p>
+                <p><strong>Clientes Vinculados:</strong> @Model.TotalClientes</p>
+            </div>
+        </div>
+        <div class="clientes-wrapper">
+  
+    
+
+        <div class="clientes-section">
+            <h3>Clientes Vinculados (Finalizados)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo Electrónico</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Clientes)
+                    {
+                        <tr>
+                            <td data-label="Nombre">@(c.Nombres + " " + c.Apellidos)</td>
+                            <td data-label="Correo">@c.Correo</td>
+                            <td data-label="Estado">Finalizado</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</div>

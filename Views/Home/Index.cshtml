@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Bienvenido";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/styleBienvenido.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Web_Recocycle.styles.css" asp-append-version="true" />
+
+<div class="screen">
+</div>
+
+<div class="container-welcome">
+    <div class="header">
+        <img src="~/imagenes/logo.png" alt="Logo" class="logo" />
+        <div class="title">
+            <h1>BIENVENIDO</h1>
+            <hr />
+        </div>
+    </div>
+
+    <div class="options">
+        <div class="card">
+            <div class="primero">
+                <p><strong>¿Tienes una cuenta?</strong></p>
+            </div>
+            <div class="lect">
+                <p>Si ya está registrado a Recocycle presiona el botón para iniciar sesión.</p>
+            </div>
+            <div class="boton">
+                <a asp-action="InicioSesionUsuario" class="btn">INICIAR SESIÓN</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="primero">
+                <p><strong>¿No tienes una cuenta?</strong></p>
+            </div>
+            <div class="lect">
+                <p>Si no te has registrado a Recocycle presiona el botón para ingresar sus datos.</p>
+            </div>
+            <div class="boton">
+                <a asp-action="RegistroUsuario" class="btn">REGISTRAR DATOS</a>
+            </div>
+
+        </div>
+    </div>
+    <footer>
+
+    </footer>
+</div>

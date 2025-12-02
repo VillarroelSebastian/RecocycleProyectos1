@@ -1,0 +1,353 @@
+﻿.mennu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 352px;
+    height: 100vh;
+    background-color: #0b3d0b;
+    overflow: hidden;
+}
+
+    .mennu .rectangle {
+        position: absolute;
+        top: 324px;
+        left: 0;
+        width: 334px;
+        height: 88px;
+        background-color: #37810f;
+    }
+
+    .mennu .div {
+        position: absolute;
+        top: 187px;
+        left: -12px;
+        width: 347px;
+        height: 109px;
+        background-color: #5bb45b;
+    }
+
+    .mennu .rectangle-2 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 352px;
+        height: 100vh;
+        background-color: #0b3d0b;
+    }
+
+    .mennu .text-wrapper {
+        position: absolute;
+        top: 0;
+        left: 16px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 30px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .mennu .text-wrapper-2 {
+        position: absolute;
+        top: 218px;
+        left: 101px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .mennu .text-wrapper-3 {
+        position: absolute;
+        top: 340px;
+        left: 100px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .mennu .img {
+        position: absolute;
+        top: 99px;
+        left: 9px;
+        width: 345px;
+        height: 93px;
+    }
+
+    .mennu .menu {
+        position: absolute;
+        top: 11px;
+        left: 280px;
+        width: 41px;
+        height: 41px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    .mennu .tabla-de {
+        position: absolute;
+        top: 218px;
+        left: 39px;
+        width: 62px;
+        height: 62px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    .mennu .text-wrapper-4 {
+        position: absolute;
+        top: 114px;
+        left: 101px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .mennu .casa {
+        position: absolute;
+        top: 124px;
+        left: 51px;
+        width: 49px;
+        height: 49px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    .mennu .text-wrapper-5 {
+        position: absolute;
+        top: 462px;
+        left: 101px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+    .mennu .text-wrapper-6 {
+        position: absolute;
+        top: 584px; /* Ajustado para que esté debajo de Premio */
+        left: 101px;
+        width: 149px;
+        height: 73px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter-BoldItalic", Helvetica;
+        font-weight: 700;
+        font-style: italic;
+        color: #ffffff;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+    }
+
+    .mennu .reporte {
+        position: absolute;
+        top: 578px; /* Alineado con el texto */
+        left: 39px;
+        width: 61px;
+        height: 61px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+
+    .mennu .empresa {
+        position: absolute;
+        top: 340px;
+        left: 39px;
+        width: 61px;
+        height: 61px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    .mennu .premio {
+        position: absolute;
+        top: 456px;
+        left: 39px;
+        width: 61px;
+        height: 61px;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+/* ACTIVO solo en celular: ilumina la imagen */
+@media (max-width: 768px) {
+    .mennu img.activo {
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        background-color: #37810f;
+        padding: 4px;
+    }
+
+    /* Los textos NO deben tener marca activa en celular */
+    .text-wrapper.activo,
+    .text-wrapper-2.activo,
+    .text-wrapper-3.activo,
+    .text-wrapper-4.activo,
+    .text-wrapper-5.activo,
+    .text-wrapper-6.activo {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+}
+
+/* ACTIVO en escritorio: solo para textos */
+@media (min-width: 769px) {
+    .text-wrapper.activo,
+    .text-wrapper-2.activo,
+    .text-wrapper-3.activo,
+    .text-wrapper-4.activo,
+    .text-wrapper-5.activo,
+    .text-wrapper-6.activo,
+    .text-wrapper-logout.activo {
+        background-color: #37810f;
+        border-left: none;
+        border-bottom: 2px solid #ffffff;
+        padding-left: 0;
+    }
+
+    /* Las imágenes NO deben iluminarse en escritorio */
+    .mennu img.activo {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+}
+
+/* Cerrar sesión - SOLO en escritorio */
+.logout-icon {
+    position: absolute;
+    bottom: 30px;
+    left: 100px; /* Ajusta si quieres moverlo */
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+    /* Efecto hover bonito */
+    .logout-icon:hover {
+        transform: scale(1.15);
+        filter: brightness(1.2);
+    }
+
+/* En móvil esto lo oculta (ya se maneja arriba como ícono normal del menú horizontal) */
+@media (max-width: 768px) {
+    .logout-icon {
+        position: static !important;
+        width: 40px;
+        height: 40px;
+        margin: 0 8px;
+    }
+}
+
+
+/* Responsive: menú horizontal arriba solo con iconos */
+@media (max-width: 768px) {
+
+    .mennu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        background-color: #0b3d0b;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0;
+        z-index: 999;
+    }
+
+        /* Ocultar textos */
+        .mennu .text-wrapper,
+        .mennu .text-wrapper-2,
+        .mennu .text-wrapper-3,
+        .mennu .text-wrapper-4,
+        .mennu .text-wrapper-5,
+        .mennu .text-wrapper-6,
+        .mennu .text-wrapper-logout {
+            display: none !important;
+        }
+
+        /* Ocultar decoraciones */
+        .mennu .rectangle,
+        .mennu .rectangle-2,
+        .mennu .div,
+        .mennu .line,
+        .mennu .menu {
+            display: none !important;
+        }
+
+        /* Íconos reorganizados horizontalmente (incluye cerrar sesión) */
+        .mennu img.casa,
+        .mennu img.tabla-de,
+        .mennu img.empresa,
+        .mennu img.premio,
+        .mennu img.reporte,
+        .mennu img.logout-icon {
+            position: static !important;
+            width: 40px;
+            height: 40px;
+            margin: 0 8px;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+
+        /* Ícono activo (solo en móvil) */
+        .mennu img.activo {
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            background-color: #37810f;
+            padding: 4px;
+        }
+}
+

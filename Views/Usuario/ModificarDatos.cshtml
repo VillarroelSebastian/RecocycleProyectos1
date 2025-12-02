@@ -1,0 +1,220 @@
+﻿@model Web_Recocycle.Models.DatosUsuarioReciclador
+
+@{
+    ViewData["Title"] = "Perfil";
+
+    string base64String = "";
+    if (Model.Reciclador.ImgPerfil != null && Model.Reciclador.ImgPerfil.Length > 0)
+    {
+        base64String = Convert.ToBase64String(Model.Reciclador.ImgPerfil);
+    }
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/EstilosUsuarios/styleModificarDatos.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Web_Recocycle.styles.css" asp-append-version="true" />
+
+<script src="~/js/scriptUsuario.jss" asp-append-version="true"></script>
+
+<div class="screen">
+</div>
+
+<div class="container-welcome">
+    <div class="options">
+        <div class="card">
+
+            <form asp-action="ModificacionDatosUsuario" method="post">
+                <div class="form-container">
+                    <div class="form-group">
+                        <div class="avatar" id="ImgPerfilBase4"></div>
+                        <input type="button" class="btn btnE" id="btnEdit" value="Cambiar foto">
+                        <input type="file" id="file-input" accept=".jpg, .png" style="display: none;" />
+
+                        <input type="hidden" id="ImgPerfilBase64Input" name="Reciclador.ImgPerfilBase64" />
+                    </div>
+
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label asp-for="Reciclador.Nombres">Nombre Completo:</label>
+                            <input type="text" id="Nombres" name="Reciclador.Nombres" value="@Model.Reciclador.Nombres" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Reciclador.Apellidos">Apellidos:</label>
+                            <input type="text" id="Apellidos" name="Reciclador.Apellidos" value="@Model.Reciclador.Apellidos" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Usuario.Telefono">Teléfono:</label>
+                        <input type="text" id="Telefono" name="Usuario.Telefono" value="@Model.Usuario.Telefono" onblur="validarTelefono()" required>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Usuario.Correo">Correo electrónico:</label>
+                        <input type="email" id="Correo" name="Usuario.Correo" value="@Model.Usuario.Correo" required>
+                    </div>
+                </div>
+
+                <div class="boton">
+                    <a asp-action="PerfilReciclador" asp-controller="Usuario" class="btn btnC">CANCELAR</a>
+
+                    <button type="submit" class="btn btnG">GUARDAR</button>
+                </div>
+            </form>
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="javascript:void(0);" id="cambiarContrasena" style="color:#DAFF00; text-decoration: underline;">
+                    ¿Desea cambiar la contraseña?
+                </a>
+            </div>
+
+        </div>
+
+        @*Script Add Imagenes (Simplificado para una sola imagen DB)*@
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const placeholderDiv = document.getElementById('ImgPerfilBase4');
+
+                const fileInput = document.getElementById('file-input');
+                const btnEdit = document.getElementById('btnEdit');
+                const form = document.querySelector('form');
+
+                const base64Input = document.getElementById('ImgPerfilBase64Input');
+
+                let selectedFiles = [];
+                const initialBase64Image = "@Html.Raw(base64String)";
+
+                const base64ToFile = (base64String, filename, mimeType) => {
+                    const byteCharacters = atob(base64String);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    return new File([byteArray], filename, { type: mimeType });
+                };
+
+                const redrawPlaceholder = () => {
+                    placeholderDiv.style.backgroundImage = 'none';
+                    placeholderDiv.classList.remove('has-image');
+                    placeholderDiv.removeAttribute("data-base64");
+
+                    if (selectedFiles.length > 0) {
+                        const file = selectedFiles[0];
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            placeholderDiv.dataset.base64 = e.target.result.split(",")[1];
+                            placeholderDiv.style.backgroundImage = `url('${e.target.result}')`;
+
+                            placeholderDiv.style.backgroundSize = 'cover';
+                            placeholderDiv.style.backgroundPosition = 'center';
+
+                            placeholderDiv.classList.add('has-image');
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                };
+
+                const initializeFromDatabase = () => {
+                    if (initialBase64Image && initialBase64Image.length > 0) {
+                        const fileObject = base64ToFile(initialBase64Image, 'db_profile.jpeg', 'image/jpeg');
+                        selectedFiles.push(fileObject);
+                    }
+                };
+                if (btnEdit) {
+                    btnEdit.addEventListener("click", () => {
+                        fileInput.click();
+                    });
+                }
+
+                fileInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    selectedFiles = [file];
+                    redrawPlaceholder();
+                    fileInput.value = '';
+                });
+
+                placeholderDiv.addEventListener('click', function() {
+                    if (placeholderDiv.classList.contains('has-image')) {
+                        Swal.fire({
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                selectedFiles = [];
+                                redrawPlaceholder();
+                            }
+                        });
+                    }
+                });
+
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const base64Data = placeholderDiv.dataset.base64;
+
+                        base64Input.value = base64Data || '';
+                    });
+                }
+
+                initializeFromDatabase();
+                redrawPlaceholder();
+
+
+
+
+                //Cambiar contraseña
+                             const btnCambiar = document.getElementById('cambiarContrasena');
+                btnCambiar.addEventListener('click', () => {
+                    Swal.fire({
+                        title: 'Cambiar Contraseña',
+                        html: `
+                            <input type="password" id="currentPassword" class="swal2-input" placeholder="Contraseña actual">
+                            <input type="password" id="newPassword" class="swal2-input" placeholder="Contraseña nueva">
+                            <input type="password" id="confirmPassword" class="swal2-input" placeholder="Confirmar contraseña">
+                        `,
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar',
+                        cancelButtonText: 'Cancelar',
+                        preConfirm: () => {
+                            const current = document.getElementById('currentPassword').value;
+                            const newPass = document.getElementById('newPassword').value;
+                            const confirmPass = document.getElementById('confirmPassword').value;
+
+                            if (!current || !newPass || !confirmPass) {
+                                Swal.showValidationMessage('Por favor complete todos los campos');
+                                return false;
+                            }
+                            if (newPass !== confirmPass) {
+                                Swal.showValidationMessage('La nueva contraseña y la confirmación no coinciden');
+                                return false;
+                            }
+                            return { current, newPass };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch('/Usuario/CambiarContrasena', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(result.value)
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('¡Éxito!', 'Contraseña actualizada correctamente.', 'success');
+                                } else {
+                                    Swal.fire('Error', data.message || 'No se pudo actualizar la contraseña.', 'error');
+                                }
+                            })
+                            .catch(() => {
+                                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+                            });
+                        }
+                    });
+                });
+            });
+           
+        </script>
+
+    </div>
+</div>

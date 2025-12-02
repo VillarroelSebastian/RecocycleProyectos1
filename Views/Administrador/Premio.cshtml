@@ -1,0 +1,117 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/global.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/style.css" />
+    <link rel="stylesheet" href="~/css/EstilosAdministrador/premio.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    @Html.Partial("_MenuAdministrador")
+
+    <div class="registro-panel">
+        <div class="encabezado-premio">
+            <h2 class="titulo-premio">Anuncio de Premios</h2>
+        </div>
+
+        <h3 class="subtitulo-premio">Premio del Mes</h3>
+
+        <div class="formulario-container">
+            <form asp-action="Premio" method="post" enctype="multipart/form-data" class="formulario-premio" id="formPremio">
+                <div class="form-row">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text"
+                           id="nombre"
+                           name="Nombre"
+                           required
+                           pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
+                           title="El nombre no puede estar vacío y solo acepta letras" />
+
+                    @if (ViewData.ModelState["Nombre"]?.Errors.Count > 0)
+                    {
+                        <div class="error-message">
+                            @ViewData.ModelState["Nombre"].Errors[0].ErrorMessage
+                        </div>
+                    }
+                </div>
+
+                <div class="form-row">
+                    <label for="fecha">Fecha Límite:</label>
+                    <input type="date" id="fecha" name="FechaLimite" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="form-row">
+                    <label>Imagen del Premio:</label>
+                    <div class="custom-upload">
+                        <label for="imagen">
+                            <img id="previewPremio" src="/imagenes/icono-subir.png" alt="Subir imagen" class="upload-preview" />
+                        </label>
+                        <input type="file" id="imagen" name="ImgPremio" accept="image/*" required />
+
+                        @if (ViewData.ModelState["ImgPremio"]?.Errors.Count > 0)
+                        {
+                            <div class="error-message">
+                                @ViewData.ModelState["ImgPremio"].Errors[0].ErrorMessage
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="boton-subida">
+                    <button type="button" class="btn-subir" onclick="confirmarEnvio();">SUBIR ANUNCIO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Vista previa de imagen
+        const imagenInput = document.getElementById('imagen');
+        const previewPremio = document.getElementById('previewPremio');
+
+        imagenInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewPremio.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+               function confirmarEnvio() {
+            var mensaje = @Html.Raw(Json.Serialize(TempData["MensajeConfirmacion"] ?? ""));
+
+            const form = document.getElementById('formPremio');
+
+            if (mensaje && mensaje.length > 0) {
+                Swal.fire({
+                    title: 'Premio activo',
+                    text: mensaje,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Registrar de todos modos',
+                    cancelButtonText: 'Cancelar',
+                    background: 'linear-gradient(#064d1a, black)',
+                    color: 'white'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                form.submit();
+            }
+        }
+
+    </script>
+</body>
+</html>

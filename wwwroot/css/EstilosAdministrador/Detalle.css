@@ -1,0 +1,150 @@
+﻿.empresa-panel {
+    margin-left: 380px;
+    padding: 60px 40px;
+    background-color: #e8f5e9;
+    min-height: 100vh;
+}
+
+.empresa-header {
+    display: flex;
+    align-items: center;
+    gap: 40px; 
+    margin-bottom: 30px;
+    background-color: #e8f5e9;
+    padding: 20px 30px;
+    border-radius: 12px;
+   
+}
+
+.empresa-logo {
+    width: 120px;
+    height: auto;
+    border-radius: 10px;
+    flex-shrink: 0; 
+}
+
+.empresa-info {
+    flex: 1; 
+}
+
+    .empresa-info h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .empresa-info p {
+        margin: 6px 0;
+        font-size: 1rem;
+    }
+
+
+.badge {
+    padding: 2px 5px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.activo {
+    background-color: #37810f;
+}
+
+.inactivo {
+    background-color: #a00;
+}
+
+.clientes-wrapper {
+    display: flex;
+   
+}
+
+.clientes-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #000000;
+    width: 800px;
+    margin-left: 100px; 
+}
+
+
+
+    .clientes-section h3 {
+        margin-bottom: 20px;
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+    table th,
+    table td {
+        border: 1px solid #ccc;
+        padding: 12px;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #064d1a;
+        color: white;
+    }
+
+@media (max-width: 768px) {
+    .empresa-panel {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .empresa-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .empresa-logo {
+        width: 100px;
+    }
+
+    .clientes-wrapper {
+        justify-content: center; /* 👈 centra la sección */
+        width: 100%;
+    }
+
+    .clientes-section {
+        margin-left: 0; /* 👈 elimina desplazamiento lateral */
+        width: 100%; /* 👈 ocupa todo el ancho disponible */
+        padding: 20px;
+        box-sizing: border-box; /* 👈 asegura que padding no rompa el layout */
+    }
+
+    table {
+        width: 100%; /* 👈 tabla se adapta al ancho */
+        font-size: 0.9rem;
+    }
+
+        table th,
+        table td {
+            padding: 8px;
+            word-break: break-word; /* 👈 evita que el texto se amontone */
+        }
+        table td {
+            display: block;
+            text-align: left;
+            padding: 10px 10px 10px 140px; /* 👈 más espacio a la izquierda */
+            position: relative;
+            border-bottom: 1px solid #ccc;
+        }
+
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                font-weight: bold;
+                width: 120px; /* 👈 ancho fijo para el encabezado */
+                white-space: nowrap;
+            }
+
+}

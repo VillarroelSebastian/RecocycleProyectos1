@@ -1,0 +1,388 @@
+﻿@model List<RegistrosReciclaje>
+
+@{
+    ViewData["Title"] = "Publicaciones";
+
+}
+
+<link rel="stylesheet" href="~/css/EstilosUsuarios/stylePublicaciones.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Web_Recocycle.styles.css" asp-append-version="true" />
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="screen">
+</div>
+
+<div class="container-welcome">
+    <div class="header">
+        <img src="~/imagenes/logo.png" alt="Logo" class="logo" />
+        <div class="title">
+            <h1>PUBLICACIONES</h1>
+            <hr />
+        </div>
+
+        <div class="header-actions">
+            <button class="back-btn" onclick="window.history.back()">
+                Volver
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+
+        @if (Model != null && Model.Any())
+        {
+            int itemCounter = 1;
+            @foreach (var item in Model)
+            {
+                <div class="list-item" data-id="@item.IdRegistroReciclaje">
+
+                    <div class="item-left">
+                        <span class="item-number">@itemCounter</span>
+                        <span class="item-category">@item.NombreCategoria</span>
+                    </div>
+
+                    <div class="item-description">@item.Descripcion</div>
+
+                    <div class="item-estadoModo">@item.Modo</div>
+
+                    <div class="item-actions">
+                        <button class="detalle-btn" data-id="@item.IdRegistroReciclaje"
+                                onclick="dataPublication(@item.IdRegistroReciclaje)">
+                            Más detalles
+                        </button>
+
+                        <button type="button" class="delete-btn" data-id="@item.IdRegistroReciclaje"
+                                onclick="confirmDelete(@item.IdRegistroReciclaje)">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+
+                itemCounter++;
+            }
+        }
+        else
+        {
+            <center><h2>No tienes publicaciones registradas en este momento.</h2></center>
+        }
+
+    </div>
+
+    <script>
+        var todosLosRegistros = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+        function showImageInLargeModal(imagePath) {
+            Swal.fire({
+                imageUrl: imagePath,
+                imageWidth: 'auto',
+                imageHeight: 'auto',
+                imageAlt: 'Imagen de Reciclaje en Grande',
+                showConfirmButton: false,
+                backdrop: `rgba(0,0,0,0.8)`
+            });
+        }
+
+        function confirmDelete(idRegistro) {
+            const style = document.createElement('style');
+
+            style.innerHTML = `
+                .popup {
+                    background: linear-gradient(#064d1a, black);
+                    border-radius: 15px;
+                    color: white !important;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .contenido {
+                    text-align: center;
+                    color: white;
+                    font-size: 30px;
+                    position: relative;
+                    z-index: 1;
+                    padding: 10px;
+                }
+
+                .fondo {
+                    opacity: 0.2;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url('/imagenes/FondoPantalla.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    z-index: 0;
+                }
+
+                .swal2-confirm.boton {
+                    font-weight: bold;
+                }
+                .swal2-cancel.boton-cancelar {
+                    font-weight: bold;
+                }
+            `;
+
+            document.head.appendChild(style);
+            Swal.fire({
+                html: `
+                    <div class="fondo"></div>
+                    <div class="contenido">
+                        <p style="margin-top: 10px;">
+                            ¿Desea eliminar esta publicacion?.
+                        </p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'popup',
+                    confirmButton: 'boton',
+                    cancelButton: 'boton-cancelar',
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteRecyclingItem(idRegistro);
+                }
+            });
+        }
+
+        function deleteRecyclingItem(idRegistro) {
+            $.ajax({
+                url: '@Url.Action("Eliminar", "Usuario")',
+                type: 'POST',
+                data: { id: idRegistro },
+                success: function (response) {
+                    if (response.success) {
+                        const style = document.createElement('style');
+
+                        style.innerHTML = `
+                            .popup {
+                                background: linear-gradient(#064d1a, black);
+                                border-radius: 15px;
+                                color: white !important;
+                                position: relative;
+                                overflow: hidden;
+                            }
+
+                            .contenido {
+                                text-align: center;
+                                color: white;
+                                font-size: 30px;
+                                position: relative;
+                                z-index: 1;
+                                padding: 10px;
+                            }
+
+                            .fondo {
+                                opacity: 0.2;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background-image: url('/imagenes/FondoPantalla.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                z-index: 0;
+                            }
+
+                            .swal2-confirm.boton {
+                                font-weight: bold;
+                            }
+                            .swal2-cancel.boton-cancelar {
+                                font-weight: bold;
+                            }
+                        `;
+
+                        document.head.appendChild(style);
+                        Swal.fire({
+                            html: `
+                                <div class="fondo"></div>
+                                <div class="contenido">
+                                    <p style="margin-top: 10px;">
+                                        La publicacion ha sido eliminada correctamente.
+                                    </p>
+                                </div>
+                            `,
+                            icon: 'success',
+                            confirmButtonColor: '#d33',
+                            confirmButtonText: 'Cerrar',
+                            customClass: {
+                                popup: 'popup',
+                                confirmButton: 'boton',
+                            }
+
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'No se pudo eliminar la publicación.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error de conexión',
+                        text: 'Ocurrió un error al contactar al servidor. Inténtalo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+
+        function dataPublication(idRegistro) {
+
+            const id = parseInt(idRegistro);
+
+            const data = todosLosRegistros.find(item => item.IdRegistroReciclaje === id);
+
+            if (!data) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se encontraron datos para este registro.',
+                    icon: 'warning'
+                });
+                return;
+            }
+
+            const style = document.createElement('style');
+
+            style.innerHTML = `
+                .detalle-popup {
+                    background: linear-gradient(#064d1a, black);
+                    border-radius: 15px;
+                    color: white;
+                    position: relative;
+                    overflow: hidden;
+                    width: 600px;
+                    max-width: 90%;
+                }
+                /* ... (resto de tus estilos CSS: .detalle-fondo, .detalle-contenido, etc.) ... */
+                .detalle-fondo {
+                    opacity: 0.2;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url('/imagenes/FondoPantalla.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    z-index: 0;
+                }
+
+                .detalle-contenido {
+                    text-align: left;
+                    line-height: 1.6;
+                    font-size: 16px;
+                    position: relative;
+                    z-index: 1;
+                    padding: 10px;
+                }
+
+                .detalle-contenido strong {
+                    color: #A9A9A9;
+                }
+
+                .detalle-contenido h4 {
+                    color: #A9A9A9;
+                    margin-top: 15px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                    padding-bottom: 5px;
+                }
+
+                .detalle-contenido ul {
+                    list-style: disc;
+                    margin-left: 20px;
+                    padding-left: 0;
+                }
+
+                .swal2-title {
+                    color: white !important;
+                    font-weight: bold;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .swal2-confirm.detalle-boton {
+                    background-color: #3085d6 !important;
+                    font-weight: bold;
+                }
+            `;
+
+            document.head.appendChild(style);
+
+            let fechasHtml = '<ul>';
+            if (data.FechasDisponibles && data.FechasDisponibles.length > 0) {
+                data.FechasDisponibles.forEach(f => {
+                    fechasHtml += `<li style="color: #ddd;">${f.Fecha} (${f.DesdeHora} - ${f.HastaHora})</li>`;
+                });
+            } else {
+                fechasHtml += '<li style="color: #ddd;">No hay fechas disponibles registradas.</li>';
+            }
+            fechasHtml += '</ul>';
+
+            let imagenesHtml = '<div style="display: flex; flex-wrap: wrap; justify-content: center;">';
+
+            if (data.Imagenes && data.Imagenes.length > 0) {
+                data.Imagenes.forEach(function(imagen) {
+                    var imagePath = imagen.Imagenes;
+
+                    if (imagePath && !imagePath.startsWith('data:')) {
+                        imagePath = `data:image/jpeg;base64,${imagePath}`;
+                    }
+
+                    imagenesHtml += `
+                        <img src="${imagePath}"
+                             alt="Reciclaje"
+                             style="max-width: 100px; max-height: 100px; margin: 5px; border: 2px solid #ccc; border-radius: 5px; flex-shrink: 0;" onclick="showImageInLargeModal('${imagePath}')"/>
+                    `;
+
+                });
+            } else {
+                imagenesHtml += '<p style="color: white; width: 100%;">No hay imágenes de prueba.</p>';
+            }
+            imagenesHtml += '</div>';
+
+            Swal.fire({
+                title: `Detalles de Registro #${data.IdRegistroReciclaje}`,
+                html: `
+                    <div class="detalle-fondo"></div>
+                    <div class="detalle-contenido">
+                        <p><strong>Categoría:</strong> ${data.NombreCategoria}</p>
+                        <p><strong>Modo:</strong> ${data.Modo}</p>
+                        <p><strong>Descripción:</strong> ${data.Descripcion}</p>
+                        <p><strong>Fecha Registro:</strong> ${new Date(data.FechaRegistro).toLocaleDateString()}</p>
+
+                        <h4>Fechas Disponibles</h4>
+                        ${fechasHtml}
+
+                        <h4>Imágenes de Prueba</h4>
+                        ${imagenesHtml}
+                    </div>
+                `,
+                showCloseButton: true,
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    popup: 'detalle-popup',
+                    confirmButton: 'detalle-boton',
+                },
+                width: 600,
+                padding: '20px'
+            });
+        }
+    </script>
+
+</div>
